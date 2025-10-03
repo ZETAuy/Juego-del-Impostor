@@ -243,6 +243,65 @@
       opacity: 0.8;
     }
     
+/* Selector de categorías - Mismos estilos que modo-selector */
+.categoria-option {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.categoria-option:hover {
+  background: var(--bg-primary);
+  transform: translateY(-2px);
+}
+
+.categoria-option.selected {
+  background: var(--text-secondary);
+  color: var(--button-text);
+}
+
+.categoria-icon {
+  font-size: 24px;
+  margin-right: 10px;
+}
+
+.categoria-info {
+  text-align: left;
+  flex: 1;
+}
+
+.categoria-title {
+  font-weight: bold;
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.categoria-desc {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.btn-confirmar-categoria {
+  margin-top: 15px;
+  padding: 10px;
+  background: var(--button-bg);
+  color: var(--button-text);
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-confirmar-categoria:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px var(--shadow);
+}
+
     /* Panel de información de roles */
     .roles-info {
       display: none;
@@ -366,6 +425,18 @@
       font-weight: bold;
     }
 
+    /* Indicador de categoría */
+    .categoria-indicator {
+      display: none;
+      margin: 5px 0;
+      padding: 5px 10px;
+      background: var(--bg-tertiary);
+      border-radius: 20px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: bold;
+    }
+
     /* CHAT CONTAINER - POSICIÓN CORREGIDA Y NO CERRABLE */
     .chat-container {
       display: none;
@@ -429,6 +500,72 @@
       display: none;
     }
     
+    /* Selector de categorías flotante */
+    .categoria-container {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 400px;
+      max-height: 80vh;
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      z-index: 1001;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      flex-direction: column;
+    }
+
+    body.light-mode .categoria-container {
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+    
+    .categoria-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--bg-tertiary);
+    }
+
+    .categoria-header h3 {
+      margin: 0;
+      font-size: 18px;
+      color: var(--text-secondary);
+    }
+
+    .categoria-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: var(--text-primary);
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+
+    .categoria-close:hover {
+      background: var(--bg-tertiary);
+      transform: scale(1.1);
+    }
+
+    .categoria-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    
+    .categoria-options::-webkit-scrollbar { width: 6px; }
+    .categoria-options::-webkit-scrollbar-thumb { background: var(--text-secondary); border-radius: 4px; }
+
     .reacciones-container { display: flex; gap: 8px; justify-content: center; margin-top: 8px; flex-wrap: wrap; }
     .btn-reaccion { background: var(--bg-tertiary); border: 2px solid var(--text-secondary); border-radius: 50%; width: 45px; height: 45px; font-size: 22px; padding: 0; margin: 0; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; }
     .btn-reaccion:hover { transform: scale(1.2); background: var(--text-secondary); box-shadow: 0 0 15px var(--text-secondary); }
@@ -487,6 +624,7 @@
     font-size: 13px;
   }
 }
+
   </style>
 </head>
 <body>
@@ -503,6 +641,12 @@
     <h2>Juego del Impostor</h2>
     <p id="mensaje">Crea una sala o únete con un código</p>
     
+    <!-- Indicador de categoría -->
+    <div class="categoria-indicator" id="categoriaIndicator">
+      Categoría: <span id="categoriaTexto">Aleatoria</span>
+      <button class="btn-info-roles" onclick="toggleCategoriaSelector()" style="margin-left: 8px;">🎯 Cambiar</button>
+    </div>
+
     <!-- Indicador de modo de juego -->
     <div class="modo-indicator" id="modoIndicator">
       Modo: <span id="modoTexto">Normal</span>
@@ -568,7 +712,12 @@
           </div>
         </div>
       </div>
+      <!-- BOTÓN PARA CONTINUAR A CATEGORÍA -->
+      <button onclick="continuarACategoria()" style="margin-top: 15px; padding: 10px; background: var(--button-bg); color: var(--button-text); border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+        ✅ Continuar a Selección de Categoría
+      </button>
     </div>
+    
     <!-- Selector de color -->
     <div class="color-selector" id="colorSelector">
       <h3>Elige tu color:</h3>
@@ -610,6 +759,54 @@
       <button onclick="enviarMensaje()">Enviar</button>
     </div>
   </div>
+  
+  <!-- Selector de categorías flotante -->
+  <div class="categoria-container" id="categoriaContainer">
+    <div class="categoria-header">
+      <h3>🎯 Selecciona una categoría</h3>
+      <button class="categoria-close" onclick="toggleCategoriaSelector()">×</button>
+    </div>
+    <div class="categoria-options">
+      <div class="categoria-option selected" data-categoria="aleatoria">
+        <div class="categoria-icon">🎲</div>
+        <div class="categoria-info">
+          <div class="categoria-title">Aleatoria</div>
+          <div class="categoria-desc">Palabras de todas las categorías</div>
+        </div>
+      </div>
+      <div class="categoria-option" data-categoria="actores">
+        <div class="categoria-icon">🎭</div>
+        <div class="categoria-info">
+          <div class="categoria-title">Actores</div>
+          <div class="categoria-desc">Actores y actrices famosos</div>
+        </div>
+      </div>
+      <div class="categoria-option" data-categoria="series">
+        <div class="categoria-icon">📺</div>
+        <div class="categoria-info">
+          <div class="categoria-title">Series</div>
+          <div class="categoria-desc">Series de TV y personajes</div>
+        </div>
+      </div>
+      <div class="categoria-option" data-categoria="videojuegos">
+        <div class="categoria-icon">🎮</div>
+        <div class="categoria-info">
+          <div class="categoria-title">Videojuegos</div>
+          <div class="categoria-desc">Personajes y elementos de videojuegos</div>
+        </div>
+      </div>
+      <div class="categoria-option" data-categoria="anime">
+        <div class="categoria-icon">🗾</div>
+        <div class="categoria-info">
+          <div class="categoria-title">Anime</div>
+          <div class="categoria-desc">Personajes de anime y manga</div>
+        </div>
+      </div>
+    </div>
+    <button class="btn-confirmar-categoria" onclick="confirmarCategoria()" style="margin-top: 15px; padding: 10px; background: var(--button-bg); color: var(--button-text); border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+      ✅ Confirmar Categoría
+    </button>
+  </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -628,9 +825,24 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const palabras = [
-      "Scarlett Johansson", "Tom Holland", "Zendaya", "Chris Hemsworth", "Emma Watson", "Robert Downey Jr.", "Margot Robbie", "Dwayne Johnson", "Gal Gadot", "Timothée Chalamet", "Florence Pugh", "Will Smith", "Chris Evans", "Ryan Reynolds", "Millie Bobby Brown", "Billie Eilish", "Ariana Grande", "Harry Styles", "Taylor Swift", "Dua Lipa", "Drake", "Ed Sheeran", "Rosalía", "BTS", "Travis Scott", "The Weeknd", "Lady Gaga", "Olivia Rodrigo", "Selena Gomez", "Post Malone", "Justin Bieber", "Rick (Rick y Morty)", "Morty", "Bob Esponja", "Patricio estrella", "Finn", "Jake", "Gumball", "Darwin", "Homero Simpson", "Marge Simpson", "Bart Simpson", "Lisa Simpson", "Walter White", "Jesse Pinkman", "Skyler White", "Tony Stark", "Peter Parker", "Loki", "Wanda Maximoff", "Doctor Strange", "Black Panther", "Harry Potter", "Mario", "Luigi", "Bowser", "Sonic", "Tails", "Knuckles", "Pikachu", "Ash Ketchum", "Goku", "Vegeta", "Bulma", "Naruto", "Sasuke", "Sakura", "Luffy", "Messi", "Nigi", "Lautaro", "Lucas", "Luciano", "Rubio", "Esteban", "Gladinir", "Luciana", "Santi", "Pasado Alterno", "Dexter"
-    ];
+    // Palabras organizadas por categorías
+    const palabrasPorCategoria = {
+      aleatoria: [
+        "Scarlett Johansson", "Tom Holland", "Zendaya", "Chris Hemsworth", "Emma Watson", "Robert Downey Jr.", "Margot Robbie", "Dwayne Johnson", "Gal Gadot", "Timothée Chalamet", "Florence Pugh", "Will Smith", "Chris Evans", "Ryan Reynolds", "Millie Bobby Brown", "Billie Eilish", "Ariana Grande", "Harry Styles", "Taylor Swift", "Dua Lipa", "Drake", "Ed Sheeran", "Rosalía", "BTS", "Travis Scott", "The Weeknd", "Lady Gaga", "Olivia Rodrigo", "Selena Gomez", "Post Malone", "Justin Bieber", "Rick (Rick y Morty)", "Morty", "Bob Esponja", "Patricio estrella", "Finn", "Jake", "Gumball", "Darwin", "Homero Simpson", "Marge Simpson", "Bart Simpson", "Lisa Simpson", "Walter White", "Jesse Pinkman", "Skyler White", "Tony Stark", "Peter Parker", "Loki", "Wanda Maximoff", "Doctor Strange", "Black Panther", "Harry Potter", "Mario", "Luigi", "Bowser", "Sonic", "Tails", "Knuckles", "Pikachu", "Ash Ketchum", "Goku", "Vegeta", "Bulma", "Naruto", "Sasuke", "Sakura", "Luffy", "Messi", "Nigi", "Lautaro", "Lucas", "Luciano", "Rubio", "Esteban", "Gladinir", "Luciana", "Santi", "Pasado Alterno", "Dexter"
+      ],
+      actores: [
+        "Scarlett Johansson", "Tom Holland", "Zendaya", "Chris Hemsworth", "Emma Watson", "Robert Downey Jr.", "Margot Robbie", "Dwayne Johnson", "Gal Gadot", "Timothée Chalamet", "Florence Pugh", "Will Smith", "Chris Evans", "Ryan Reynolds", "Millie Bobby Brown", "Leonardo DiCaprio", "Brad Pitt", "Angelina Jolie", "Jennifer Lawrence", "Meryl Streep", "Tom Hanks", "Johnny Depp", "Natalie Portman", "Samuel L. Jackson", "Morgan Freeman", "Denzel Washington", "Anne Hathaway", "Keanu Reeves", "Cillian Murphy", "Pedro Pascal"
+      ],
+      series: [
+        "Rick (Rick y Morty)", "Morty", "Homero Simpson", "Marge Simpson", "Bart Simpson", "Lisa Simpson", "Walter White", "Jesse Pinkman", "Skyler White", "Tony Stark", "Peter Parker", "Loki", "Wanda Maximoff", "Doctor Strange", "Black Panther", "Jon Snow", "Daenerys Targaryen", "Tyrion Lannister", "Sheldon Cooper", "Penny", "Eleven", "Mike Wheeler", "Dustin Henderson", "Saul Goodman", "Gustavo Fring", "Phoebe Buffay", "Rachel Green", "Ross Geller", "Monica Geller", "Chandler Bing", "Joey Tribbiani"
+      ],
+      videojuegos: [
+        "Mario", "Luigi", "Bowser", "Sonic", "Tails", "Knuckles", "Pikachu", "Ash Ketchum", "Link", "Zelda", "Ganondorf", "Master Chief", "Kratos", "Lara Croft", "Ellie", "Joel", "Arthur Morgan", "Geralt de Rivia", "Aloy", "Nathan Drake", "Samus Aran", "Donkey Kong", "Yoshi", "Kirby", "Fox McCloud", "Solid Snake", "Cloud Strife", "Sephiroth", "Jill Valentine", "Leon S. Kennedy"
+      ],
+      anime: [
+        "Goku", "Vegeta", "Bulma", "Naruto", "Sasuke", "Sakura", "Luffy", "Zoro", "Nami", "Sanji", "Light Yagami", "L", "Mikasa Ackerman", "Eren Yeager", "Levi Ackerman", "Edward Elric", "Alphonse Elric", "Spike Spiegel", "Faye Valentine", "Sailor Moon", "Monkey D. Luffy", "Roronoa Zoro", "Satoru Gojo", "Yuji Itadori", "Nezuko Kamado", "Tanjiro Kamado", "Levi Ackerman", "Eren Yeager", "Mikasa Ackerman"
+      ]
+    };
 
     // Colores disponibles para los jugadores
     const coloresJugadores = [
@@ -646,6 +858,7 @@
     let miNombre = "";
     let miColor = null;
     let modoJuego = "normal"; // "normal" o "masRoles"
+    let categoriaJuego = "aleatoria"; // Nueva variable para la categoría
     let cantidadJugadoresAnterior = 0;
     let juegoIniciado = false;
     let audioContext = null;
@@ -663,13 +876,14 @@
 
     // Inicializar contexto de audio
     function inicializarAudio() {
-      if (!audioContext) {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioContext.state === 'suspended') {
-        audioContext.resume();
-      }
-    }
+  if (!audioContext) {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  // Siempre intentar reanudar el contexto (necesario para navegadores modernos)
+  if (audioContext.state !== 'running') {
+    audioContext.resume();
+  }
+}
 
     // Sonidos
     function reproducirSonido(frecuencia, duracion) {
@@ -695,22 +909,26 @@
     }
 
     function sonidoUnirse() {
+      inicializarAudio();
       reproducirSonido(600, 0.2);
       setTimeout(() => reproducirSonido(800, 0.2), 100);
     }
 
     function sonidoCrearSala() {
+      inicializarAudio();
       reproducirSonido(523, 0.15);
       setTimeout(() => reproducirSonido(659, 0.15), 80);
       setTimeout(() => reproducirSonido(784, 0.25), 160);
     }
 
     function sonidoCopiar() {
+      inicializarAudio();
       reproducirSonido(800, 0.1);
       setTimeout(() => reproducirSonido(1000, 0.15), 50);
     }
 
     function sonidoAsignarRoles() {
+      inicializarAudio();
       reproducirSonido(440, 0.2);
       setTimeout(() => reproducirSonido(392, 0.2), 150);
       setTimeout(() => reproducirSonido(349, 0.2), 300);
@@ -718,21 +936,25 @@
     }
 
     function sonidoNuevaRonda() {
+      inicializarAudio();
       reproducirSonido(698, 0.15);
       setTimeout(() => reproducirSonido(784, 0.15), 100);
       setTimeout(() => reproducirSonido(880, 0.2), 200);
     }
 
     function sonidoCountdown() {
+      inicializarAudio();
       reproducirSonido(600, 0.3);
     }
 
     function sonidoCountdownFinal() {
+      inicializarAudio();
       reproducirSonido(800, 0.15);
       setTimeout(() => reproducirSonido(1000, 0.3), 100);
     }
 
     function sonidoReaccion() {
+      inicializarAudio();
       reproducirSonido(800, 0.1);
       setTimeout(() => reproducirSonido(1000, 0.1), 80);
     }
@@ -1008,18 +1230,135 @@
       });
     }
 
-    // Crear sala
+    // Función para continuar a la selección de categoría después de elegir el modo
+    window.continuarACategoria = function() {
+      // Ocultar selector de modo
+      document.getElementById("modoSelector").style.display = "none";
+      
+      // Mostrar selector de categorías
+      toggleCategoriaSelector();
+    };
+
+    // Función para mostrar/ocultar selector de categorías
+    window.toggleCategoriaSelector = function() {
+  // Solo permitir al host cambiar la categoría
+  if (!esHost && salaActual) {
+    alert("Solo el host puede cambiar la categoría de la sala");
+    return;
+  }
+  
+  const container = document.getElementById('categoriaContainer');
+  if (container.style.display === 'none' || container.style.display === '') {
+    container.style.display = 'flex';
+  } else {
+    container.style.display = 'none';
+  }
+};
+
+    // Función para confirmar la categoría seleccionada
+    window.confirmarCategoria = function() {
+  toggleCategoriaSelector();
+  
+  if (esHost) {
+    // Si es host, actualizar en Firestore
+    cambiarCategoria(categoriaJuego);
+  } else {
+    // Si no es host, solo actualizar localmente (pero no debería poder cambiar)
+    document.getElementById('categoriaTexto').textContent = obtenerNombreCategoria(categoriaJuego);
+  }
+  
+  // 🚨 IMPORTANTE: Si estamos creando una nueva sala, llamar a crearSalaConCategoria
+  if (!salaActual && esHost) {
+    crearSalaConCategoria();
+  }
+};
+
+    // Función para configurar selector de categorías
+    function configurarSelectorCategoria() {
+      const opcionesCategoria = document.querySelectorAll('.categoria-option');
+      
+      opcionesCategoria.forEach(opcion => {
+        opcion.addEventListener('click', function() {
+          // Deseleccionar todas las opciones
+          opcionesCategoria.forEach(opt => opt.classList.remove('selected'));
+          
+          // Seleccionar esta opción
+          this.classList.add('selected');
+          categoriaJuego = this.dataset.categoria;
+        });
+      });
+    }
+
+    // Función para obtener el nombre legible de una categoría
+    function obtenerNombreCategoria(categoria) {
+      const nombres = {
+        aleatoria: "Aleatoria",
+        actores: "Actores",
+        series: "Series",
+        videojuegos: "Videojuegos",
+        anime: "Anime"
+      };
+      return nombres[categoria] || "Aleatoria";
+    }
+
+    // Función para obtener una palabra aleatoria según la categoría
+    function obtenerPalabraAleatoria(categoria) {
+      const listaPalabras = palabrasPorCategoria[categoria] || palabrasPorCategoria.aleatoria;
+      return listaPalabras[Math.floor(Math.random() * listaPalabras.length)];
+    }
+
+    // Función para obtener una palabra diferente a la principal (para el confundido)
+    function obtenerPalabraDiferente(palabraPrincipal, categoria) {
+      const listaPalabras = palabrasPorCategoria[categoria] || palabrasPorCategoria.aleatoria;
+      let palabraDiferente;
+      do {
+        palabraDiferente = listaPalabras[Math.floor(Math.random() * listaPalabras.length)];
+      } while (palabraDiferente === palabraPrincipal && listaPalabras.length > 1);
+      return palabraDiferente;
+    }
+
+// Función para que el host cambie la categoría
+async function cambiarCategoria(nuevaCategoria) {
+  if (!salaActual || !esHost) {
+    return;
+  }
+  
+  const salaRef = doc(db, "salas", salaActual);
+  await updateDoc(salaRef, {
+    categoria: nuevaCategoria
+  });
+  
+  // Actualizar localmente
+  categoriaJuego = nuevaCategoria;
+  document.getElementById('categoriaTexto').textContent = obtenerNombreCategoria(nuevaCategoria);
+}
+
+    // Crear sala - MODIFICADA PARA MOSTRAR PRIMERO EL SELECTOR DE MODO
     window.crearSala = async function() {
       miNombre = document.getElementById("nombreJugador").value.trim();
       if (!miNombre) {
         alert("Por favor ingresa tu nombre");
         return;
       }
+      esHost = true;
+      // PRIMERO MOSTRAR SELECTOR DE MODO
+      document.getElementById("modoSelector").style.display = "block";
+      
+      // OCULTAR ELEMENTOS DE ENTRADA
+      document.getElementById("nombreJugador").style.display = "none";
+      document.querySelector('button[onclick="crearSala()"]').style.display = "none";
+      document.querySelector('button[onclick="unirseSala()"]').style.display = "none";
+      document.getElementById("codigoSala").style.display = "none";
+      
+      document.getElementById("mensaje").innerText = "Selecciona el modo de juego y luego la categoría";
+    };
 
+    // Función para crear sala después de elegir categoría
+    async function crearSalaConCategoria() {
       sonidoCrearSala();
 
       const codigo = Math.random().toString(36).substring(2, 7).toUpperCase();
-      const palabra = palabras[Math.floor(Math.random() * palabras.length)];
+      const palabra = obtenerPalabraAleatoria(categoriaJuego);
       const salaRef = doc(db, "salas", codigo);
 
       // Asignar un color por defecto
@@ -1040,7 +1379,8 @@
         countdown: null,
         hostId: jugadorId,
         reacciones: [],
-        modoJuego: modoJuego
+        modoJuego: modoJuego,
+        categoria: categoriaJuego
       });
 
       salaActual = codigo;
@@ -1050,6 +1390,10 @@
       // MOSTRAR EL CÓDIGO DE SALA
       document.getElementById("codigoSalaDisplay").style.display = "block";
       document.getElementById("codigoTexto").textContent = codigo;
+      
+      // MOSTRAR INDICADOR DE CATEGORÍA
+      document.getElementById("categoriaIndicator").style.display = "block";
+      document.getElementById("categoriaTexto").textContent = obtenerNombreCategoria(categoriaJuego);
       
       // MOSTRAR INDICADOR DE MODO
       document.getElementById("modoIndicator").style.display = "block";
@@ -1067,73 +1411,72 @@
       document.getElementById("colorSelector").style.display = "block";
       crearSelectorColores();
       
-      // OCULTAR SELECTOR DE MODO (ya se eligió)
-      document.getElementById("modoSelector").style.display = "none";
+      // EL SELECTOR DE MODO YA ESTÁ OCULTO, NO HACE FALTA OCULTARLO DE NUEVO
       
       document.getElementById("botonAsignar").style.display = "inline-block";
-      document.getElementById("nombreJugador").style.display = "none";
-      document.querySelector('button[onclick="crearSala()"]').style.display = "none";
-      document.querySelector('button[onclick="unirseSala()"]').style.display = "none";
-      document.getElementById("codigoSala").style.display = "none";
-      
+      document.getElementById("modoSelector").style.display = "none";
       document.getElementById("mensaje").innerText = 
         "Sala creada. Comparte el código con tus amigos. Esperando jugadores...";
 
       // Escuchar cambios
-onSnapshot(salaRef, (snap) => {
-  const data = snap.data();
-  if (data) {
-    // 🚨 Verificar si sigo en la sala (por ID o por nombre)
-    const sigoEnSala = data.jugadores[jugadorId] || 
-                       Object.values(data.jugadores).some(j => j.nombre === miNombre);
+      onSnapshot(salaRef, (snap) => {
+        const data = snap.data();
+        if (data) {
+          // 🚨 Verificar si sigo en la sala (por ID)
+          const sigoEnSala = data.jugadores && data.jugadores[jugadorId];
 
-    if (!sigoEnSala) {
-  localStorage.setItem("kickMessage", "Fuiste kickeado de la sala.");
-  location.reload();
-  return;
+          if (!sigoEnSala) {
+            localStorage.setItem("kickMessage", "Fuiste kickeado de la sala.");
+            location.reload();
+            return;
+          }
+
+          actualizarListaJugadores(data.jugadores, data.hostId);
+          actualizarChat(data.mensajes);
+          // Actualizar categoría cuando cambie
+if (data.categoria && data.categoria !== categoriaJuego) {
+  categoriaJuego = data.categoria;
+  document.getElementById('categoriaTexto').textContent = obtenerNombreCategoria(categoriaJuego);
 }
 
-    actualizarListaJugadores(data.jugadores, data.hostId);
-    actualizarChat(data.mensajes);
+          // Escuchar reacciones
+          if (data.reacciones && data.reacciones.length > 0) {
+            const ultimaReaccion = data.reacciones[data.reacciones.length - 1];
+            if (Date.now() - ultimaReaccion.timestamp < 2000) {
+              mostrarReaccionFlotante(ultimaReaccion.nombre, ultimaReaccion.emoji);
+            }
+          }
 
-    // Escuchar reacciones
-    if (data.reacciones && data.reacciones.length > 0) {
-      const ultimaReaccion = data.reacciones[data.reacciones.length - 1];
-      if (Date.now() - ultimaReaccion.timestamp < 2000) {
-        mostrarReaccionFlotante(ultimaReaccion.nombre, ultimaReaccion.emoji);
-      }
-    }
+          // Escuchar countdown
+          if (data.countdown !== null && data.countdown !== undefined) {
+            mostrarCountdownSincronizado(data.countdown);
+          }
 
-    // Escuchar countdown
-    if (data.countdown !== null && data.countdown !== undefined) {
-      mostrarCountdownSincronizado(data.countdown);
+          const misDatos = data.jugadores[jugadorId];
+          if (misDatos && misDatos.estado) {
+            if (misDatos.estado === "pendiente") {
+              // 🚨 Volver al lobby si estamos en pendiente
+              juegoIniciado = false;
+              document.getElementById('chatContainer').style.display = 'none';
+              document.getElementById("colorSelector").style.display = "block";
+              document.getElementById("mensaje").innerText = "Esperando que el host inicie...";
+              document.getElementById("botonNuevaRonda").style.display = "none";
+            } else {
+              // 🚨 Juego en curso
+              if (!juegoIniciado) {
+                juegoIniciado = true;
+                document.getElementById('chatContainer').style.display = 'flex';
+                document.getElementById("colorSelector").style.display = "none";
+                if (esHost) {
+                  document.getElementById("botonNuevaRonda").style.display = "inline-block";
+                }
+              }
+              document.getElementById("mensaje").innerText = "Tu rol es: " + misDatos.estado;
+            }
+          }
+        }
+      });
     }
-
-    const misDatos = data.jugadores[jugadorId];
-if (misDatos && misDatos.estado) {
-  if (misDatos.estado === "pendiente") {
-    // 🚨 Volver al lobby si estamos en pendiente
-    juegoIniciado = false;
-    document.getElementById('chatContainer').style.display = 'none';
-    document.getElementById("colorSelector").style.display = "block";
-    document.getElementById("mensaje").innerText = "Esperando que el host inicie...";
-    document.getElementById("botonNuevaRonda").style.display = "none";
-  } else {
-    // 🚨 Juego en curso
-    if (!juegoIniciado) {
-      juegoIniciado = true;
-      document.getElementById('chatContainer').style.display = 'flex';
-      document.getElementById("colorSelector").style.display = "none";
-      if (esHost) {
-        document.getElementById("botonNuevaRonda").style.display = "inline-block";
-      }
-    }
-    document.getElementById("mensaje").innerText = "Tu rol es: " + misDatos.estado;
-  }
-}
-  }
-});
-    };
 
     // Unirse a sala
 window.unirseSala = async function() {
@@ -1173,30 +1516,13 @@ window.unirseSala = async function() {
     color: miColor
   };
 
-  await setDoc(salaRef, {
-    palabra: data.palabra,
-    impostor: data.impostor,
-    jugadores,
-    mensajes: data.mensajes || [],
-    countdown: data.countdown || null,
-    hostId: data.hostId,
-    reacciones: data.reacciones || [],
-    modoJuego: data.modoJuego || "normal"
-  });
+  // Obtener el modo de juego y la categoría de la sala
+  modoJuego = data.modoJuego || "normal";
+  categoriaJuego = data.categoria || "aleatoria";
 
-      // Obtener el modo de juego de la sala
-      modoJuego = data.modoJuego || "normal";
-
-      await setDoc(salaRef, {
-        palabra: data.palabra,
-        impostor: data.impostor,
-        jugadores,
-        mensajes: data.mensajes || [],
-        countdown: data.countdown || null,
-        hostId: data.hostId,
-        reacciones: data.reacciones || [],
-        modoJuego: modoJuego
-      });
+  await updateDoc(salaRef, {
+  jugadores: jugadores
+});
 
       document.getElementById("codigoSala").style.display = "none";
       document.getElementById("nombreJugador").style.display = "none";
@@ -1213,6 +1539,10 @@ window.unirseSala = async function() {
       document.getElementById("modoTexto").textContent = 
         modoJuego === 'normal' ? 'Normal' : 'Más Roles';
 
+      // MOSTRAR INDICADOR DE CATEGORÍA
+      document.getElementById("categoriaIndicator").style.display = "block";
+      document.getElementById("categoriaTexto").textContent = obtenerNombreCategoria(categoriaJuego);
+
       // MOSTRAR BOTÓN DE INFO DE ROLES (solo en modo Más Roles)
       if (modoJuego === "masRoles") {
         document.getElementById('btnInfoRoles').style.display = 'inline-block';
@@ -1224,9 +1554,6 @@ window.unirseSala = async function() {
       document.getElementById("colorSelector").style.display = "block";
       crearSelectorColores();
 
-      // OCULTAR SELECTOR DE MODO (solo para el host)
-      document.getElementById("modoSelector").style.display = "none";
-
       document.getElementById("mensaje").innerText = 
         "Unido a sala " + codigo + ". Espera a que empiece el juego.";
 
@@ -1234,9 +1561,8 @@ window.unirseSala = async function() {
 onSnapshot(salaRef, (snap) => {
   const data = snap.data();
   if (data) {
-    // 🚨 Verificar si sigo en la sala (por ID o por nombre)
-    const sigoEnSala = data.jugadores[jugadorId] || 
-                       Object.values(data.jugadores).some(j => j.nombre === miNombre);
+    // 🚨 Verificar si sigo en la sala (por ID)
+    const sigoEnSala = data.jugadores && data.jugadores[jugadorId];
 
     if (!sigoEnSala) {
   localStorage.setItem("kickMessage", "Fuiste kickeado de la sala.");
@@ -1246,6 +1572,11 @@ onSnapshot(salaRef, (snap) => {
 
     actualizarListaJugadores(data.jugadores, data.hostId);
     actualizarChat(data.mensajes);
+    // Actualizar categoría cuando cambie
+if (data.categoria && data.categoria !== categoriaJuego) {
+  categoriaJuego = data.categoria;
+  document.getElementById('categoriaTexto').textContent = obtenerNombreCategoria(categoriaJuego);
+}
 
     // Escuchar reacciones
     if (data.reacciones && data.reacciones.length > 0) {
@@ -1297,6 +1628,7 @@ if (misDatos && misDatos.estado) {
       const snapshot = await getDoc(salaRef);
       const data = snapshot.data();
       const jugadores = Object.keys(data.jugadores);
+      const categoriaActual = data.categoria || "aleatoria";
 
       if (jugadores.length < 3) {
         alert("Necesitan al menos 3 jugadores");
@@ -1307,7 +1639,7 @@ if (misDatos && misDatos.estado) {
 
       // Elegir roles según el modo de juego
       let nuevosRoles = {};
-      const palabraPrincipal = data.palabra;
+      const palabraPrincipal = obtenerPalabraAleatoria(categoriaActual);
       
       if (modoJuego === "normal") {
         // Modo normal: 1 impostor, el resto con la misma palabra
@@ -1351,12 +1683,12 @@ if (misDatos && misDatos.estado) {
           if (i === impostorIndex) {
             rol = "IMPOSTOR";
           } else if (i === confundidoIndex) {
-            // El confundido recibe una palabra diferente
-            let palabraConfundido;
-            do {
-              palabraConfundido = palabras[Math.floor(Math.random() * palabras.length)];
-            } while (palabraConfundido === palabraPrincipal);
-            rol = `CONFUNDIDO: ${palabraConfundido}`;
+          // El confundido recibe una palabra diferente de la misma categoría
+          let palabraConfundido;
+          do {
+            palabraConfundido = obtenerPalabraAleatoria(categoriaActual);
+          } while (palabraConfundido === palabraPrincipal);
+          rol = `CONFUNDIDO: ${palabraConfundido}`;
           } else if (i === saboteadorIndex) {
             rol = `SABOTEADOR: ${palabraPrincipal}`;
           }
@@ -1411,13 +1743,14 @@ window.nuevaRonda = async function() {
   const snapshot = await getDoc(salaRef);
   const data = snapshot.data();
   const jugadores = Object.keys(data.jugadores);
+  const categoriaActual = data.categoria || "aleatoria";
 
   if (jugadores.length < 3) {
     alert("Necesitan al menos 3 jugadores");
     return;
   }
 
-  const nuevaPalabra = palabras[Math.floor(Math.random() * palabras.length)];
+  const nuevaPalabra = obtenerPalabraAleatoria(categoriaActual);
 
   // Resetear estados
   let nuevosEstados = {};
@@ -1512,11 +1845,9 @@ window.nuevaRonda = async function() {
       
       animar();
       
-      // Configurar selector de modo de juego
+       // Configurar selectores de modo y categoría
       configurarSelectorModo();
-      
-      // Mostrar selector de modo al cargar la página
-      document.getElementById("modoSelector").style.display = "block";
+      configurarSelectorCategoria();
     });
   </script>
   <script>
