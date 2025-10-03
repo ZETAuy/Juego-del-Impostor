@@ -958,7 +958,34 @@
       reproducirSonido(800, 0.1);
       setTimeout(() => reproducirSonido(1000, 0.1), 80);
     }
+    
+    function sonidoSeleccionarModo() {
+      inicializarAudio();
+      reproducirSonido(600, 0.1);
+      setTimeout(() => reproducirSonido(800, 0.1), 50);
+    }
 
+    function sonidoSeleccionarCategoria() {
+      inicializarAudio();
+      reproducirSonido(500, 0.1);
+      setTimeout(() => reproducirSonido(700, 0.1), 50);
+      setTimeout(() => reproducirSonido(900, 0.15), 100);
+    }
+
+    function sonidoContinuar() {
+      inicializarAudio();
+      reproducirSonido(659, 0.1); // Mi
+      setTimeout(() => reproducirSonido(784, 0.1), 80); // Sol
+      setTimeout(() => reproducirSonido(880, 0.15), 160); // La
+    }
+
+    function sonidoConfirmar() {
+      inicializarAudio();
+      reproducirSonido(880, 0.1); // La
+      setTimeout(() => reproducirSonido(784, 0.1), 80); // Sol
+      setTimeout(() => reproducirSonido(659, 0.2), 160); // Mi
+    }
+    
     // Mostrar countdown sincronizado
     function mostrarCountdownSincronizado(valor) {
       const overlay = document.getElementById('countdownOverlay');
@@ -1216,6 +1243,8 @@
       
       opcionesModo.forEach(opcion => {
         opcion.addEventListener('click', function() {
+          // Reproducir sonido de selección
+      sonidoSeleccionarModo();
           // Deseleccionar todas las opciones
           opcionesModo.forEach(opt => opt.classList.remove('selected'));
           
@@ -1279,6 +1308,8 @@
       
       opcionesCategoria.forEach(opcion => {
         opcion.addEventListener('click', function() {
+          // Reproducir sonido de selección
+      sonidoSeleccionarCategoria();
           // Deseleccionar todas las opciones
           opcionesCategoria.forEach(opt => opt.classList.remove('selected'));
           
