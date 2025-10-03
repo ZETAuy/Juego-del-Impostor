@@ -1110,18 +1110,27 @@ onSnapshot(salaRef, (snap) => {
     }
 
     const misDatos = data.jugadores[jugadorId];
-    if (misDatos && misDatos.estado && misDatos.estado !== "pendiente") {
-      if (!juegoIniciado) {
-        juegoIniciado = true;
-        document.getElementById('chatContainer').style.display = 'flex';
-        document.getElementById("colorSelector").style.display = "none";
-        if (esHost) {
-          document.getElementById("botonNuevaRonda").style.display = "inline-block";
-        }
+if (misDatos && misDatos.estado) {
+  if (misDatos.estado === "pendiente") {
+    // 🚨 Volver al lobby si estamos en pendiente
+    juegoIniciado = false;
+    document.getElementById('chatContainer').style.display = 'none';
+    document.getElementById("colorSelector").style.display = "block";
+    document.getElementById("mensaje").innerText = "Esperando que el host inicie...";
+    document.getElementById("botonNuevaRonda").style.display = "none";
+  } else {
+    // 🚨 Juego en curso
+    if (!juegoIniciado) {
+      juegoIniciado = true;
+      document.getElementById('chatContainer').style.display = 'flex';
+      document.getElementById("colorSelector").style.display = "none";
+      if (esHost) {
+        document.getElementById("botonNuevaRonda").style.display = "inline-block";
       }
-      document.getElementById("mensaje").innerText =
-        "Tu rol es: " + misDatos.estado;
     }
+    document.getElementById("mensaje").innerText = "Tu rol es: " + misDatos.estado;
+  }
+}
   }
 });
     };
@@ -1252,15 +1261,27 @@ onSnapshot(salaRef, (snap) => {
     }
 
     const misDatos = data.jugadores[jugadorId];
-    if (misDatos && misDatos.estado && misDatos.estado !== "pendiente") {
-      if (!juegoIniciado) {
-        juegoIniciado = true;
-        document.getElementById('chatContainer').style.display = 'flex';
-        document.getElementById("colorSelector").style.display = "none";
+if (misDatos && misDatos.estado) {
+  if (misDatos.estado === "pendiente") {
+    // 🚨 Volver al lobby si estamos en pendiente
+    juegoIniciado = false;
+    document.getElementById('chatContainer').style.display = 'none';
+    document.getElementById("colorSelector").style.display = "block";
+    document.getElementById("mensaje").innerText = "Esperando que el host inicie...";
+    document.getElementById("botonNuevaRonda").style.display = "none";
+  } else {
+    // 🚨 Juego en curso
+    if (!juegoIniciado) {
+      juegoIniciado = true;
+      document.getElementById('chatContainer').style.display = 'flex';
+      document.getElementById("colorSelector").style.display = "none";
+      if (esHost) {
+        document.getElementById("botonNuevaRonda").style.display = "inline-block";
       }
-      document.getElementById("mensaje").innerText =
-        "Tu rol es: " + misDatos.estado;
     }
+    document.getElementById("mensaje").innerText = "Tu rol es: " + misDatos.estado;
+  }
+}
   }
 });
     };
@@ -1378,47 +1399,47 @@ onSnapshot(salaRef, (snap) => {
     };
 
     // Nueva ronda
-    window.nuevaRonda = async function() {
-      if (!salaActual || !esHost) {
-        alert("Solo el host puede iniciar una nueva ronda");
-        return;
-      }
+window.nuevaRonda = async function() {
+  if (!salaActual || !esHost) {
+    alert("Solo el host puede iniciar una nueva ronda");
+    return;
+  }
 
-      sonidoNuevaRonda();
+  sonidoNuevaRonda();
 
-      const salaRef = doc(db, "salas", salaActual);
-      const snapshot = await getDoc(salaRef);
-      const data = snapshot.data();
-      const jugadores = Object.keys(data.jugadores);
+  const salaRef = doc(db, "salas", salaActual);
+  const snapshot = await getDoc(salaRef);
+  const data = snapshot.data();
+  const jugadores = Object.keys(data.jugadores);
 
-      if (jugadores.length < 3) {
-        alert("Necesitan al menos 3 jugadores");
-        return;
-      }
+  if (jugadores.length < 3) {
+    alert("Necesitan al menos 3 jugadores");
+    return;
+  }
 
-      const nuevaPalabra = palabras[Math.floor(Math.random() * palabras.length)];
+  const nuevaPalabra = palabras[Math.floor(Math.random() * palabras.length)];
 
-      // Resetear estados
-      let nuevosEstados = {};
-      jugadores.forEach(id => {
-        const jugadorData = data.jugadores[id];
-        nuevosEstados[id] = {
-          estado: "pendiente",
-          nombre: jugadorData.nombre,
-          color: jugadorData.color
-        };
-      });
+  // Resetear estados
+  let nuevosEstados = {};
+  jugadores.forEach(id => {
+    const jugadorData = data.jugadores[id];
+    nuevosEstados[id] = {
+      estado: "pendiente",
+      nombre: jugadorData.nombre,
+      color: jugadorData.color
+    };
+  });
 
-      await setDoc(salaRef, {
-        palabra: nuevaPalabra,
-        impostor: null,
-        jugadores: nuevosEstados,
-        mensajes: data.mensajes || [],
-        countdown: null,
-        hostId: data.hostId,
-        reacciones: data.reacciones || [],
-        modoJuego: modoJuego
-      });
+  await setDoc(salaRef, {
+    palabra: nuevaPalabra,
+    impostor: null,
+    jugadores: nuevosEstados,
+    mensajes: [], // 🚨 limpiar el chat en cada nueva ronda
+    countdown: null,
+    hostId: data.hostId,
+    reacciones: [],
+    modoJuego: data.modoJuego // mejor usar el de la sala, no el local
+  });
 
       juegoIniciado = false;
       document.getElementById("mensaje").innerText = 
