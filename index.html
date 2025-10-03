@@ -802,6 +802,12 @@
           <div class="categoria-desc">Personajes de anime y manga</div>
         </div>
       </div>
+      <div class="categoria-option" data-categoria="artistas">
+        <div class="categoria-icon">🎤</div>
+        <div class="categoria-info">
+          <div class="categoria-title">Artistas</div>
+          <div class="categoria-desc">Cantantes o bandas famosas</div>
+      </div>
     </div>
     <button class="btn-confirmar-categoria" onclick="confirmarCategoria()" style="margin-top: 15px; padding: 10px; background: var(--button-bg); color: var(--button-text); border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
       ✅ Confirmar Categoría
@@ -828,19 +834,22 @@
     // Palabras organizadas por categorías
     const palabrasPorCategoria = {
       aleatoria: [
-        "Scarlett Johansson", "Tom Holland", "Zendaya", "Chris Hemsworth", "Emma Watson", "Robert Downey Jr.", "Margot Robbie", "Dwayne Johnson", "Gal Gadot", "Timothée Chalamet", "Florence Pugh", "Will Smith", "Chris Evans", "Ryan Reynolds", "Millie Bobby Brown", "Billie Eilish", "Ariana Grande", "Harry Styles", "Taylor Swift", "Dua Lipa", "Drake", "Ed Sheeran", "Rosalía", "BTS", "Travis Scott", "The Weeknd", "Lady Gaga", "Olivia Rodrigo", "Selena Gomez", "Post Malone", "Justin Bieber", "Rick (Rick y Morty)", "Morty", "Bob Esponja", "Patricio estrella", "Finn", "Jake", "Gumball", "Darwin", "Homero Simpson", "Marge Simpson", "Bart Simpson", "Lisa Simpson", "Walter White", "Jesse Pinkman", "Skyler White", "Tony Stark", "Peter Parker", "Loki", "Wanda Maximoff", "Doctor Strange", "Black Panther", "Harry Potter", "Mario", "Luigi", "Bowser", "Sonic", "Tails", "Knuckles", "Pikachu", "Ash Ketchum", "Goku", "Vegeta", "Bulma", "Naruto", "Sasuke", "Sakura", "Luffy", "Messi", "Nigi", "Lautaro", "Lucas", "Luciano", "Rubio", "Esteban", "Gladinir", "Luciana", "Santi", "Pasado Alterno", "Dexter"
+        "Scarlett Johansson", "Tom Holland", "Zendaya", "Chris Hemsworth", "Emma Watson", "Robert Downey Jr.", "Margot Robbie", "Dwayne Johnson", "Gal Gadot", "Timothée Chalamet", "Florence Pugh", "Will Smith", "Chris Evans", "Ryan Reynolds", "Ryan Gosling", "Millie Bobby Brown", "Leonardo DiCaprio", "Brad Pitt", "Angelina Jolie", "Jennifer Lawrence", "Tom Hanks", "Johnny Depp", "Natalie Portman", "Samuel L. Jackson", "Morgan Freeman", "Keanu Reeves", "Cillian Murphy", "Pedro Pascal", "Sydney Sweeney", "Rick (Rick y Morty)", "Morty", "Homero Simpson", "Marge Simpson", "Bart Simpson", "Lisa Simpson", "Walter White", "Jesse Pinkman", "Skyler White", "Tony Stark", "Peter Parker", "Loki", "Wanda Maximoff", "Doctor Strange", "Black Panther", "Jon Snow", "Daenerys Targaryen", "Tyrion Lannister", "Once", "Mike Wheeler", "Dustin Henderson", "Saul Goodman", "Gustavo Fring", "Rick Grimes", "Daryl Dixon", "Dexter Morgan", "Eric Cartman", "Kenny (Southpark)", "Kyle (Southpark)", "Stan (Southpark)", "Mr. Bean", "Mario", "Luigi", "Bowser", "Sonic", "Tails", "Knuckles", "Pikachu", "Ash Ketchum", "Link", "Zelda", "Kratos", "Lara Croft", "Ellie", "Joel", "Arthur Morgan", "Nathan Drake", "Donkey Kong", "Yoshi", "Kirby", "Solid Snake", "Jill Valentine", "Leon S. Kennedy", "Ada Wong", "Goku", "Vegeta", "Bulma", "Naruto", "Sasuke", "Sakura", "Luffy", "Zoro", "Nami", "Sanji", "Light Yagami", "L", "Mikasa Ackerman", "Eren Yeager", "Levi Ackerman", "Edward Elric", "Alphonse Elric", "Spike Spiegel", "Faye Valentine", "Sailor Moon", "Monkey D. Luffy", "Roronoa Zoro", "Satoru Gojo", "Yuji Itadori", "Nezuko Kamado", "Tanjiro Kamado", "Levi Ackerman", "Eren Yeager", "Mikasa Ackerman", "Justin Bieber", "The Weeknd", "Zell", "Duki", "Neo Pistea", "YSY A", "Drake", "Taylor Swift", "Kanye West", "C.R.O", "Lana del Rey", "Quevedo", "Bizarrap", "Shakira", "Daddy Yankee", "Tiago PZK", "Milo J", "Nicki Nicole", "Trueno", "Maria Becerra", "Eminem", "Snoop Dogg", "50 Cent", "Travis Scott", "Kendrick Lamar", "Tyler, The Creator", "Billie Eilish", "Olivia Rodrigo", "Ariana Grande", "Dua Lipa", "Rihanna", "Beyoncé", "Adele", "Imagine Dragons", "Ed Sheeran", "Harry Styles", "One Direction", "Avril Lavigne", "Saramalacara", "Michael Jackson", "Freddie Mercury", "Seven Kayne", "Ramma"
       ],
       actores: [
-        "Scarlett Johansson", "Tom Holland", "Zendaya", "Chris Hemsworth", "Emma Watson", "Robert Downey Jr.", "Margot Robbie", "Dwayne Johnson", "Gal Gadot", "Timothée Chalamet", "Florence Pugh", "Will Smith", "Chris Evans", "Ryan Reynolds", "Millie Bobby Brown", "Leonardo DiCaprio", "Brad Pitt", "Angelina Jolie", "Jennifer Lawrence", "Meryl Streep", "Tom Hanks", "Johnny Depp", "Natalie Portman", "Samuel L. Jackson", "Morgan Freeman", "Denzel Washington", "Anne Hathaway", "Keanu Reeves", "Cillian Murphy", "Pedro Pascal"
+        "Scarlett Johansson", "Tom Holland", "Zendaya", "Chris Hemsworth", "Emma Watson", "Robert Downey Jr.", "Margot Robbie", "Dwayne Johnson", "Gal Gadot", "Timothée Chalamet", "Florence Pugh", "Will Smith", "Chris Evans", "Ryan Reynolds", "Ryan Gosling", "Millie Bobby Brown", "Leonardo DiCaprio", "Brad Pitt", "Angelina Jolie", "Jennifer Lawrence", "Tom Hanks", "Johnny Depp", "Natalie Portman", "Samuel L. Jackson", "Morgan Freeman", "Keanu Reeves", "Cillian Murphy", "Pedro Pascal", "Sydney Sweeney"
       ],
       series: [
-        "Rick (Rick y Morty)", "Morty", "Homero Simpson", "Marge Simpson", "Bart Simpson", "Lisa Simpson", "Walter White", "Jesse Pinkman", "Skyler White", "Tony Stark", "Peter Parker", "Loki", "Wanda Maximoff", "Doctor Strange", "Black Panther", "Jon Snow", "Daenerys Targaryen", "Tyrion Lannister", "Sheldon Cooper", "Penny", "Eleven", "Mike Wheeler", "Dustin Henderson", "Saul Goodman", "Gustavo Fring", "Phoebe Buffay", "Rachel Green", "Ross Geller", "Monica Geller", "Chandler Bing", "Joey Tribbiani"
+        "Rick (Rick y Morty)", "Morty", "Homero Simpson", "Marge Simpson", "Bart Simpson", "Lisa Simpson", "Walter White", "Jesse Pinkman", "Skyler White", "Tony Stark", "Peter Parker", "Loki", "Wanda Maximoff", "Doctor Strange", "Black Panther", "Jon Snow", "Daenerys Targaryen", "Tyrion Lannister", "Once", "Mike Wheeler", "Dustin Henderson", "Saul Goodman", "Gustavo Fring", "Rick Grimes", "Daryl Dixon", "Dexter Morgan", "Eric Cartman", "Kenny (Southpark)", "Kyle (Southpark)", "Stan (Southpark)", "Mr. Bean"
       ],
       videojuegos: [
-        "Mario", "Luigi", "Bowser", "Sonic", "Tails", "Knuckles", "Pikachu", "Ash Ketchum", "Link", "Zelda", "Ganondorf", "Master Chief", "Kratos", "Lara Croft", "Ellie", "Joel", "Arthur Morgan", "Geralt de Rivia", "Aloy", "Nathan Drake", "Samus Aran", "Donkey Kong", "Yoshi", "Kirby", "Fox McCloud", "Solid Snake", "Cloud Strife", "Sephiroth", "Jill Valentine", "Leon S. Kennedy"
+        "Mario", "Luigi", "Bowser", "Sonic", "Tails", "Knuckles", "Pikachu", "Ash Ketchum", "Link", "Zelda", "Kratos", "Lara Croft", "Ellie", "Joel", "Arthur Morgan", "Nathan Drake", "Donkey Kong", "Yoshi", "Kirby", "Solid Snake", "Jill Valentine", "Leon S. Kennedy", "Ada Wong"
       ],
       anime: [
         "Goku", "Vegeta", "Bulma", "Naruto", "Sasuke", "Sakura", "Luffy", "Zoro", "Nami", "Sanji", "Light Yagami", "L", "Mikasa Ackerman", "Eren Yeager", "Levi Ackerman", "Edward Elric", "Alphonse Elric", "Spike Spiegel", "Faye Valentine", "Sailor Moon", "Monkey D. Luffy", "Roronoa Zoro", "Satoru Gojo", "Yuji Itadori", "Nezuko Kamado", "Tanjiro Kamado", "Levi Ackerman", "Eren Yeager", "Mikasa Ackerman"
+      ],
+      artistas: [
+        "Justin Bieber", "The Weeknd", "Zell", "Duki", "Neo Pistea", "YSY A", "Drake", "Taylor Swift", "Kanye West", "C.R.O", "Lana del Rey", "Quevedo", "Bizarrap", "Shakira", "Daddy Yankee", "Tiago PZK", "Milo J", "Nicki Nicole", "Trueno", "Maria Becerra", "Eminem", "Snoop Dogg", "50 Cent", "Travis Scott", "Kendrick Lamar", "Tyler, The Creator", "Billie Eilish", "Olivia Rodrigo", "Ariana Grande", "Dua Lipa", "Rihanna", "Beyoncé", "Adele", "Imagine Dragons", "Ed Sheeran", "Harry Styles", "One Direction", "Avril Lavigne", "Saramalacara", "Michael Jackson", "Freddie Mercury", "Seven Kayne", "Ramma"
       ]
     };
 
@@ -1327,7 +1336,8 @@
         actores: "Actores",
         series: "Series",
         videojuegos: "Videojuegos",
-        anime: "Anime"
+        anime: "Anime",
+        artistas: "Artistas"
       };
       return nombres[categoria] || "Aleatoria";
     }
