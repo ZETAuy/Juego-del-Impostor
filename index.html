@@ -35,9 +35,9 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;             /* mantenemos altura de viewport para que la tarjeta siempre entre */
+      height: 100vh;
       margin: 0;
-      overflow: hidden;          /* evitamos scroll de página */
+      overflow: hidden;
       position: relative;
       transition: background 0.3s ease;
     }
@@ -84,28 +84,27 @@
     .theme-toggle { position: fixed; top: 20px; right: 20px; z-index: 1000; background: var(--bg-secondary); border: none; border-radius: 50%; width: 50px; height: 50px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 10px var(--shadow); transition: all 0.3s ease; }
     .theme-toggle:hover { transform: scale(1.1); box-shadow: 0 6px 15px var(--shadow); }
     
-    /* ---------- MODIFICADO: tarjeta que siempre entra en pantalla ---------- */
+    /* Tarjeta principal */
     .card {
       background: var(--bg-primary);
       padding: 20px;
       border-radius: 10px;
       text-align: center;
-      width: 350px;
-      max-height: 90vh;          /* <-- MODIFICADO: nunca supera 90% del viewport */
-      display: flex;             /* <-- MODIFICADO: layout interno por columnas */
+      width: 380px;
+      max-height: 90vh;
+      display: flex;
       flex-direction: column;
       box-shadow: 0px 0px 20px var(--shadow);
       position: relative;
       z-index: 1;
       backdrop-filter: blur(10px);
       transition: background 0.3s ease, box-shadow 0.3s ease;
-      overflow: hidden;          /* <-- MODIFICADO: evita overflow fuera de la tarjeta */
+      overflow: hidden;
     }
-    /* --------------------------------------------------------------------- */
     
     body.light-mode .card { box-shadow: 0px 0px 30px rgba(0,0,0,0.15); }
     
-    input, button {
+    input, button, select {
       margin: 10px;
       padding: 10px;
       border-radius: 8px;
@@ -125,9 +124,9 @@
       border-radius: 8px;
       display: none;
       transition: background 0.3s ease;
-      flex: 1 1 auto;            /* <-- MODIFICADO: ocupa espacio flexible dentro de la tarjeta */
-      overflow-y: auto;          /* <-- MODIFICADO: scroll interno si hay muchos jugadores */
-      min-height: 60px;          /* evita que se colapse demasiado */
+      flex: 1 1 auto;
+      overflow-y: auto;
+      min-height: 60px;
     }
     .jugadores-info h3 {
       margin: 5px 0;
@@ -143,7 +142,6 @@
       list-style: none;
       padding: 0;
       margin: 10px 0;
-      /* dejamos que el contenedor .jugadores-info controle el scroll */
     }
     .lista-jugadores li {
       padding: 5px;
@@ -153,6 +151,15 @@
       font-size: 14px;
       color: var(--text-primary);
       transition: background 0.3s ease;
+      display: flex;
+      align-items: center;
+    }
+    .color-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 8px;
     }
     .lista-jugadores::-webkit-scrollbar { width: 6px; }
     .lista-jugadores::-webkit-scrollbar-thumb { background: var(--text-secondary); border-radius: 4px; }
@@ -169,46 +176,256 @@
     .btn-copiar { background: #5cb85c; margin-left: 10px; padding: 8px 15px; font-size: 14px; color: #fff; }
     .btn-copiar:hover { background: #4cae4c; }
     
-    input[type="text"] {
+    input[type="text"], select {
       width: calc(100% - 40px);
       background: var(--bg-secondary);
       color: var(--text-primary);
       border: 2px solid transparent;
       transition: all 0.3s ease;
     }
-    input[type="text"]:focus { outline: none; border-color: var(--text-secondary); }
+    input[type="text"]:focus, select:focus { outline: none; border-color: var(--text-secondary); }
     #botonNuevaRonda { display: none; background: #f39c12; margin-top: 10px; }
     #botonNuevaRonda:hover { background: #e67e22; }
     
-    /* chat: mantenemos también scroll interno y dejamos que ocupe espacio flexible */
-    .chat-container {
+    /* Selector de modo de juego */
+    .modo-selector {
       display: none;
-      margin-top: 15px;
+      margin: 10px 0;
+      padding: 10px;
       background: var(--bg-secondary);
       border-radius: 8px;
-      padding: 10px;
-      flex: 1 1 auto;            /* <-- MODIFICADO: ocupa espacio flexible */
-      min-height: 120px;
-      overflow-y: auto;          /* <-- MODIFICADO: scroll interno si hay muchos mensajes */
       transition: background 0.3s ease;
     }
+    .modo-selector h3 {
+      margin: 5px 0;
+      font-size: 16px;
+      color: var(--text-secondary);
+    }
+    .modo-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .modo-option {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .modo-option:hover {
+      background: var(--bg-primary);
+      transform: translateY(-2px);
+    }
+    .modo-option.selected {
+      background: var(--text-secondary);
+      color: var(--button-text);
+    }
+    .modo-icon {
+      font-size: 24px;
+      margin-right: 10px;
+    }
+    .modo-info {
+      text-align: left;
+      flex: 1;
+    }
+    .modo-title {
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    .modo-desc {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+    
+    /* Panel de información de roles */
+    .roles-info {
+      display: none;
+      margin: 10px 0;
+      padding: 15px;
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+    .roles-info h3 {
+      margin: 0 0 10px 0;
+      font-size: 16px;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+    .roles-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .role-item {
+      padding: 8px;
+      background: var(--bg-tertiary);
+      border-radius: 6px;
+      border-left: 4px solid transparent;
+    }
+    .role-item.ciudadano {
+      border-left-color: #4CAF50;
+    }
+    .role-item.impostor {
+      border-left-color: #F44336;
+    }
+    .role-item.confundido {
+      border-left-color: #FF9800;
+    }
+    .role-item.saboteador {
+      border-left-color: #9C27B0;
+    }
+    .role-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .role-icon {
+      font-size: 18px;
+      margin-right: 8px;
+    }
+    .role-title {
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .role-desc {
+      font-size: 12px;
+      opacity: 0.9;
+      line-height: 1.3;
+    }
+
+    /* Botón para mostrar/ocultar información de roles */
+    .btn-info-roles {
+      background: transparent;
+      border: 1px solid var(--text-secondary);
+      color: var(--text-secondary);
+      margin: 5px 0;
+      padding: 6px 12px;
+      font-size: 12px;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn-info-roles:hover {
+      background: var(--text-secondary);
+      color: var(--button-text);
+    }
+    
+    /* Selector de color */
+    .color-selector {
+      display: none;
+      margin: 10px 0;
+      padding: 10px;
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+    .color-selector h3 {
+      margin: 5px 0;
+      font-size: 16px;
+      color: var(--text-secondary);
+    }
+    .colores-disponibles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    .color-option {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.2s ease;
+    }
+    .color-option:hover {
+      transform: scale(1.2);
+    }
+    .color-option.selected {
+      border: 2px solid white;
+      box-shadow: 0 0 5px rgba(255,255,255,0.7);
+    }
+    
+    /* Indicador de modo de juego */
+    .modo-indicator {
+      display: none;
+      margin: 5px 0;
+      padding: 5px 10px;
+      background: var(--bg-tertiary);
+      border-radius: 20px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: bold;
+    }
+
+    /* CHAT CONTAINER - POSICIÓN CORREGIDA Y NO CERRABLE */
+    .chat-container {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 350px;
+      max-height: 500px;
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      z-index: 1000;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      flex-direction: column;
+    }
+
+    body.light-mode .chat-container {
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+    
     .chat-messages {
-      min-height: 120px;
-      max-height: none; /* dejamos que el contenedor chat se encargue del scroll */
+      height: 250px;
       overflow-y: auto;
       background: var(--bg-primary);
-      padding: 8px;
-      border-radius: 5px;
-      margin-bottom: 8px;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 10px;
       font-size: 13px;
       text-align: left;
       transition: background 0.3s ease;
     }
+
+    .chat-messages::-webkit-scrollbar { width: 6px; }
+    .chat-messages::-webkit-scrollbar-thumb { background: var(--text-secondary); border-radius: 4px; }
+    
     .chat-message { margin: 5px 0; padding: 4px; border-radius: 3px; background: var(--bg-tertiary); color: var(--text-primary); transition: background 0.3s ease; }
     .chat-message strong { color: var(--text-secondary); }
     .chat-input-container { display: flex; gap: 5px; }
     .chat-input-container input { flex: 1; margin: 0; width: auto; }
     .chat-input-container button { margin: 0; padding: 8px 15px; }
+    
+    .chat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--bg-tertiary);
+    }
+
+    .chat-header h3 {
+      margin: 0;
+      font-size: 16px;
+      color: var(--text-secondary);
+    }
+
+    /* Eliminamos el botón de cerrar del chat */
+    .chat-close {
+      display: none;
+    }
     
     .reacciones-container { display: flex; gap: 8px; justify-content: center; margin-top: 8px; flex-wrap: wrap; }
     .btn-reaccion { background: var(--bg-tertiary); border: 2px solid var(--text-secondary); border-radius: 50%; width: 45px; height: 45px; font-size: 22px; padding: 0; margin: 0; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; }
@@ -224,6 +441,129 @@
     @keyframes countdownPulse { 0% { transform: scale(0.5); opacity: 0; } 50% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
 
   </style>
+</head>
+<body>
+  <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">&#9728;&#65039;</button>
+  <div class="mesh-gradient"></div>
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="blob blob3"></div>
+  <div class="countdown-overlay" id="countdownOverlay">
+    <div class="countdown-number" id="countdownNumber">3</div>
+  </div>
+  <div class="background-symbols" id="symbols"></div>
+  <div class="card">
+    <h2>Juego del Impostor</h2>
+    <p id="mensaje">Crea una sala o únete con un código</p>
+    
+    <!-- Indicador de modo de juego -->
+    <div class="modo-indicator" id="modoIndicator">
+      Modo: <span id="modoTexto">Normal</span>
+      <button class="btn-info-roles" id="btnInfoRoles" onclick="toggleInfoRoles()" style="display: none;">ℹ️ Info Roles</button>
+    </div>
+    
+    <!-- Panel de información de roles -->
+    <div class="roles-info" id="rolesInfo">
+      <h3>🎭 Roles Disponibles</h3>
+      <div class="roles-list">
+        <div class="role-item ciudadano">
+          <div class="role-header">
+            <div class="role-icon">🟢</div>
+            <div class="role-title">Ciudadano</div>
+          </div>
+          <div class="role-desc">Conoce la palabra secreta. Tu objetivo es encontrar al impostor sin revelar la palabra.</div>
+        </div>
+        <div class="role-item impostor">
+          <div class="role-header">
+            <div class="role-icon">🔴</div>
+            <div class="role-title">Impostor</div>
+          </div>
+          <div class="role-desc">No conoce la palabra. Debe engañar a los demás haciéndose pasar por ciudadano.</div>
+        </div>
+        <div class="role-item confundido">
+          <div class="role-header">
+            <div class="role-icon">🟠</div>
+            <div class="role-title">Confundido</div>
+          </div>
+          <div class="role-desc">Tiene una palabra DIFERENTE a los ciudadanos. Cree que es ciudadano pero está confundido.</div>
+        </div>
+        <div class="role-item saboteador">
+          <div class="role-header">
+            <div class="role-icon">🟣</div>
+            <div class="role-title">Saboteador</div>
+          </div>
+          <div class="role-desc">Sabe la palabra real pero ayuda al impostor. Da pistas falsas para confundir al grupo.</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="codigo-sala" id="codigoSalaDisplay">
+      <span id="codigoTexto"></span>
+      <button class="btn-copiar" onclick="copiarCodigo()">📋 Copiar</button>
+    </div>
+    
+    <!-- Selector de modo de juego -->
+    <div class="modo-selector" id="modoSelector">
+      <h3>Selecciona el modo de juego:</h3>
+      <div class="modo-options">
+        <div class="modo-option selected" data-modo="normal">
+          <div class="modo-icon">🎯</div>
+          <div class="modo-info">
+            <div class="modo-title">Modo Normal</div>
+            <div class="modo-desc">Un impostor vs. el resto con la misma palabra</div>
+          </div>
+        </div>
+        <div class="modo-option" data-modo="masRoles">
+          <div class="modo-icon">🎭</div>
+          <div class="modo-info">
+            <div class="modo-title">Más Roles</div>
+            <div class="modo-desc">Incluye Confundido y Saboteador para más caos</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Selector de color -->
+    <div class="color-selector" id="colorSelector">
+      <h3>Elige tu color:</h3>
+      <div class="colores-disponibles" id="coloresDisponibles">
+        <!-- Los colores se generarán dinámicamente con JavaScript -->
+      </div>
+    </div>
+    
+    <div class="jugadores-info" id="jugadoresInfo">
+      <h3>Jugadores en sala: <span id="contadorJugadores">0</span></h3>
+      <ul class="lista-jugadores" id="listaJugadores"></ul>
+    </div>
+    
+    <input id="nombreJugador" type="text" placeholder="Tu nombre"><br>
+    <button onclick="crearSala()">Crear Sala</button><br>
+    <input id="codigoSala" placeholder="Código de sala">
+    <button onclick="unirseSala()">Unirse</button><br>
+    <button id="botonAsignar" onclick="asignarRoles()">Asignar Roles (Host)</button>
+    <button id="botonNuevaRonda" onclick="nuevaRonda()">🔄 Nueva Ronda</button>
+  </div>
+  
+  <!-- CHAT CONTAINER - FUERA DE LA TARJETA PRINCIPAL Y SIN BOTÓN DE CERRAR -->
+  <div class="chat-container" id="chatContainer">
+    <div class="chat-header">
+      <h3>💬 Chat</h3>
+      <!-- Eliminamos el botón de cerrar -->
+    </div>
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="reacciones-container">
+      <button class="btn-reaccion" onclick="enviarReaccion('👍')" title="Me gusta">👍</button>
+      <button class="btn-reaccion" onclick="enviarReaccion('👎')" title="No me gusta">👎</button>
+      <button class="btn-reaccion" onclick="enviarReaccion('🤔')" title="Sospechoso">🤔</button>
+      <button class="btn-reaccion" onclick="enviarReaccion('😱')" title="Sorpresa">😱</button>
+      <button class="btn-reaccion" onclick="enviarReaccion('🤣')" title="Risa">🤣</button>
+      <button class="btn-reaccion" onclick="enviarReaccion('☠️')" title="Calavera">☠️</button>
+    </div>
+    <div class="chat-input-container">
+      <input id="chatInput" type="text" placeholder="Escribe un mensaje..." onkeypress="handleChatKeyPress(event)">
+      <button onclick="enviarMensaje()">Enviar</button>
+    </div>
+  </div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, doc, setDoc, getDoc, onSnapshot, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -241,18 +581,38 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-   const palabras = [
-"Scarlett Johansson", "Tom Holland", "Zendaya", "Chris Hemsworth", "Emma Watson", "Robert Downey Jr.", "Margot Robbie", "Dwayne Johnson", "Gal Gadot", "Timothée Chalamet", "Florence Pugh", "Will Smith", "Chris Evans", "Ryan Reynolds", "Millie Bobby Brown", "Billie Eilish", "Ariana Grande", "Harry Styles", "Taylor Swift", "Dua Lipa", "Drake", "Ed Sheeran", "Rosalía", "BTS", "Travis Scott", "The Weeknd", "Lady Gaga", "Olivia Rodrigo", "Selena Gomez", "Post Malone", "Justin Bieber", "Rick (Rick y Morty)", "Morty", "Bob Esponja", "Patricio estrella", "Finn", "Jake", "Gumball", "Darwin", "Homero Simpson", "Marge Simpson", "Bart Simpson", "Lisa Simpson", "Walter White", "Jesse Pinkman", "Skyler White", "Tony Stark", "Peter Parker", "Loki", "Wanda Maximoff", "Doctor Strange", "Black Panther", "Harry Potter", "Mario", "Luigi", "Bowser", "Sonic", "Tails", "Knuckles", "Pikachu", "Ash Ketchum", "Goku", "Vegeta", "Bulma", "Naruto", "Sasuke", "Sakura", "Luffy", "Messi", "Nigi", "Lautaro", "Lucas", "Luciano", "Rubio", "Esteban", "Gladinir", "Luciana", "Santi", "Pasado Alterno", "Dexter"
-];
+    const palabras = [
+      "Scarlett Johansson", "Tom Holland", "Zendaya", "Chris Hemsworth", "Emma Watson", "Robert Downey Jr.", "Margot Robbie", "Dwayne Johnson", "Gal Gadot", "Timothée Chalamet", "Florence Pugh", "Will Smith", "Chris Evans", "Ryan Reynolds", "Millie Bobby Brown", "Billie Eilish", "Ariana Grande", "Harry Styles", "Taylor Swift", "Dua Lipa", "Drake", "Ed Sheeran", "Rosalía", "BTS", "Travis Scott", "The Weeknd", "Lady Gaga", "Olivia Rodrigo", "Selena Gomez", "Post Malone", "Justin Bieber", "Rick (Rick y Morty)", "Morty", "Bob Esponja", "Patricio estrella", "Finn", "Jake", "Gumball", "Darwin", "Homero Simpson", "Marge Simpson", "Bart Simpson", "Lisa Simpson", "Walter White", "Jesse Pinkman", "Skyler White", "Tony Stark", "Peter Parker", "Loki", "Wanda Maximoff", "Doctor Strange", "Black Panther", "Harry Potter", "Mario", "Luigi", "Bowser", "Sonic", "Tails", "Knuckles", "Pikachu", "Ash Ketchum", "Goku", "Vegeta", "Bulma", "Naruto", "Sasuke", "Sakura", "Luffy", "Messi", "Nigi", "Lautaro", "Lucas", "Luciano", "Rubio", "Esteban", "Gladinir", "Luciana", "Santi", "Pasado Alterno", "Dexter"
+    ];
+
+    // Colores disponibles para los jugadores
+    const coloresJugadores = [
+      '#FF5252', '#FF4081', '#E040FB', '#7C4DFF', '#536DFE', 
+      '#448AFF', '#40C4FF', '#18FFFF', '#64FFDA', '#69F0AE',
+      '#B2FF59', '#EEFF41', '#FFFF00', '#FFD740', '#FFAB40',
+      '#FF6E40', '#8D6E63', '#78909C', '#455A64', '#263238'
+    ];
 
     let salaActual = null;
     let jugadorId = Math.floor(Math.random() * 1000000);
     let esHost = false;
     let miNombre = "";
+    let miColor = null;
+    let modoJuego = "normal"; // "normal" o "masRoles"
     let cantidadJugadoresAnterior = 0;
     let juegoIniciado = false;
     let audioContext = null;
     let ultimoCountdown = null;
+
+    // Función para mostrar/ocultar información de roles
+    window.toggleInfoRoles = function() {
+      const rolesInfo = document.getElementById('rolesInfo');
+      if (rolesInfo.style.display === 'none' || rolesInfo.style.display === '') {
+        rolesInfo.style.display = 'block';
+      } else {
+        rolesInfo.style.display = 'none';
+      }
+    };
 
     // Inicializar contexto de audio
     function inicializarAudio() {
@@ -393,6 +753,14 @@
       });
     };
 
+    window.handleChatKeyPress = function(event) {
+      if (event.key === 'Enter') {
+        enviarMensaje();
+      }
+    };
+
+    // Eliminamos la función toggleChat para que el chat no se pueda cerrar
+
     // Mostrar reacción flotante
     function mostrarReaccionFlotante(nombre, emoji) {
       const reaccion = document.createElement('div');
@@ -430,17 +798,12 @@
         mensajes: arrayUnion({
           nombre: miNombre,
           texto: mensaje,
-          timestamp: Date.now()
+          timestamp: Date.now(),
+          color: miColor
         })
       });
       
       input.value = '';
-    };
-
-    window.handleChatKeyPress = function(event) {
-      if (event.key === 'Enter') {
-        enviarMensaje();
-      }
     };
 
     // Actualizar chat
@@ -452,7 +815,10 @@
       mensajesRecientes.forEach(msg => {
         const div = document.createElement('div');
         div.className = 'chat-message';
-        div.innerHTML = `<strong>${msg.nombre}:</strong> ${msg.texto}`;
+        
+        // Aplicar color al nombre del jugador si está disponible
+        const nombreStyle = msg.color ? `style="color: ${msg.color}"` : '';
+        div.innerHTML = `<strong ${nombreStyle}>${msg.nombre}:</strong> ${msg.texto}`;
         chatDiv.appendChild(div);
       });
       chatDiv.scrollTop = chatDiv.scrollHeight;
@@ -460,33 +826,139 @@
 
     // Actualizar lista de jugadores
     function actualizarListaJugadores(jugadores, hostId) {
-      const lista = document.getElementById('listaJugadores');
-      const contador = document.getElementById('contadorJugadores');
-      const jugadoresKeys = Object.keys(jugadores);
-      
-      if (jugadoresKeys.length > cantidadJugadoresAnterior && cantidadJugadoresAnterior > 0) {
-        sonidoUnirse();
-      }
-      cantidadJugadoresAnterior = jugadoresKeys.length;
-      
-      contador.textContent = jugadoresKeys.length;
-      lista.innerHTML = '';
-      
-      jugadoresKeys.forEach((id) => {
-        const li = document.createElement('li');
-        const esYo = id == jugadorId;
-        const esHostJugador = id == hostId;
-        const nombreJugador = jugadores[id].nombre || 'Jugador sin nombre';
-        
-        let textoJugador = nombreJugador;
-        if (esYo) textoJugador += ' (Tú)';
-        if (esHostJugador) textoJugador += ' (Host)';
-        
-        li.textContent = textoJugador;
-        lista.appendChild(li);
+  const lista = document.getElementById('listaJugadores');
+  const contador = document.getElementById('contadorJugadores');
+  const jugadoresKeys = Object.keys(jugadores);
+
+  if (jugadoresKeys.length > cantidadJugadoresAnterior && cantidadJugadoresAnterior > 0) {
+    sonidoUnirse();
+  }
+  cantidadJugadoresAnterior = jugadoresKeys.length;
+
+  contador.textContent = jugadoresKeys.length;
+  lista.innerHTML = '';
+
+  jugadoresKeys.forEach((id) => {
+    const li = document.createElement('li');
+    const esYo = id == jugadorId;
+    const esHostJugador = id == hostId;
+    const nombreJugador = jugadores[id].nombre || 'Jugador sin nombre';
+    const colorJugador = jugadores[id].color || '#78909C';
+
+    let textoJugador = nombreJugador;
+    if (esYo) textoJugador += ' (Tú)';
+    if (esHostJugador) textoJugador += ' (Host)';
+
+    // Añadir indicador de color
+    const colorIndicator = document.createElement('span');
+    colorIndicator.className = 'color-indicator';
+    colorIndicator.style.backgroundColor = colorJugador;
+
+    li.appendChild(colorIndicator);
+    li.appendChild(document.createTextNode(textoJugador));
+
+    // 🚨 Si soy host y no es el host, hago interactuable el recuadro
+    if (esHost && !esYo) {
+      li.style.cursor = "pointer";
+      li.addEventListener("click", () => {
+        mostrarBotonKick(li, id, nombreJugador);
       });
+    }
+
+    lista.appendChild(li);
+  });
+
+  document.getElementById('jugadoresInfo').style.display = 'block';
+}
+    // 🚨 Mostrar botón para kickear
+    function mostrarBotonKick(li, jugadorKickId, nombreJugador) {
+  if (li.querySelector(".btn-kick")) return; // ya existe botón
+
+  const btn = document.createElement("button");
+  btn.textContent = "❌ Kickear";
+  btn.className = "btn-kick";
+  btn.style.marginLeft = "10px";
+  btn.style.background = "#e74c3c";
+  btn.style.color = "#fff";
+  btn.style.border = "none";
+  btn.style.padding = "4px 8px";
+  btn.style.borderRadius = "5px";
+  btn.style.cursor = "pointer";
+
+  btn.addEventListener("click", async (event) => {
+    event.stopPropagation(); // evita duplicar clicks
+    if (!salaActual) return;
+
+    const salaRef = doc(db, "salas", salaActual);
+    const snapshot = await getDoc(salaRef);
+    const data = snapshot.data();
+    if (!data) return;
+
+    const nuevosJugadores = { ...data.jugadores };
+    delete nuevosJugadores[jugadorKickId];
+
+    await setDoc(salaRef, {
+      ...data,
+      jugadores: nuevosJugadores
+    });
+
+    alert(`${nombreJugador} fue kickeado de la sala.`);
+  });
+
+  li.appendChild(btn);
+}
+    // Crear selector de colores
+    function crearSelectorColores() {
+      const contenedorColores = document.getElementById('coloresDisponibles');
+      contenedorColores.innerHTML = '';
       
-      document.getElementById('jugadoresInfo').style.display = 'block';
+      coloresJugadores.forEach(color => {
+        const colorOption = document.createElement('div');
+        colorOption.className = 'color-option';
+        colorOption.style.backgroundColor = color;
+        colorOption.dataset.color = color;
+        
+        colorOption.addEventListener('click', function() {
+          // Deseleccionar todos los colores
+          document.querySelectorAll('.color-option').forEach(opt => {
+            opt.classList.remove('selected');
+          });
+          
+          // Seleccionar este color
+          this.classList.add('selected');
+          miColor = color;
+          
+          // Actualizar el color en la base de datos
+          if (salaActual) {
+            const salaRef = doc(db, "salas", salaActual);
+            updateDoc(salaRef, {
+              [`jugadores.${jugadorId}.color`]: color
+            });
+          }
+        });
+        
+        contenedorColores.appendChild(colorOption);
+      });
+    }
+
+    // Configurar selector de modo de juego
+    function configurarSelectorModo() {
+      const opcionesModo = document.querySelectorAll('.modo-option');
+      
+      opcionesModo.forEach(opcion => {
+        opcion.addEventListener('click', function() {
+          // Deseleccionar todas las opciones
+          opcionesModo.forEach(opt => opt.classList.remove('selected'));
+          
+          // Seleccionar esta opción
+          this.classList.add('selected');
+          modoJuego = this.dataset.modo;
+          
+          // Actualizar indicador de modo
+          document.getElementById('modoTexto').textContent = 
+            modoJuego === 'normal' ? 'Normal' : 'Más Roles';
+        });
+      });
     }
 
     // Crear sala
@@ -503,8 +975,15 @@
       const palabra = palabras[Math.floor(Math.random() * palabras.length)];
       const salaRef = doc(db, "salas", codigo);
 
+      // Asignar un color por defecto
+      miColor = coloresJugadores[Math.floor(Math.random() * coloresJugadores.length)];
+
       const jugadores = {};
-      jugadores[jugadorId] = { estado: "pendiente", nombre: miNombre };
+      jugadores[jugadorId] = { 
+        estado: "pendiente", 
+        nombre: miNombre,
+        color: miColor
+      };
 
       await setDoc(salaRef, {
         palabra: palabra,
@@ -513,84 +992,144 @@
         mensajes: [],
         countdown: null,
         hostId: jugadorId,
-        reacciones: []
+        reacciones: [],
+        modoJuego: modoJuego
       });
 
       salaActual = codigo;
       esHost = true;
       cantidadJugadoresAnterior = 1;
+      
+      // MOSTRAR EL CÓDIGO DE SALA
+      document.getElementById("codigoSalaDisplay").style.display = "block";
+      document.getElementById("codigoTexto").textContent = codigo;
+      
+      // MOSTRAR INDICADOR DE MODO
+      document.getElementById("modoIndicator").style.display = "block";
+      document.getElementById("modoTexto").textContent = 
+        modoJuego === 'normal' ? 'Normal' : 'Más Roles';
+      
+      // MOSTRAR BOTÓN DE INFO DE ROLES (solo en modo Más Roles)
+      if (modoJuego === "masRoles") {
+        document.getElementById('btnInfoRoles').style.display = 'inline-block';
+      } else {
+        document.getElementById('btnInfoRoles').style.display = 'none';
+      }
+      
+      // MOSTRAR SELECTOR DE COLORES
+      document.getElementById("colorSelector").style.display = "block";
+      crearSelectorColores();
+      
+      // OCULTAR SELECTOR DE MODO (ya se eligió)
+      document.getElementById("modoSelector").style.display = "none";
+      
       document.getElementById("botonAsignar").style.display = "inline-block";
-      document.getElementById("codigoSala").style.display = "none";
       document.getElementById("nombreJugador").style.display = "none";
       document.querySelector('button[onclick="crearSala()"]').style.display = "none";
       document.querySelector('button[onclick="unirseSala()"]').style.display = "none";
-      
-      const codigoDiv = document.getElementById("codigoSalaDisplay");
-      codigoDiv.style.display = "block";
-      document.getElementById("codigoTexto").textContent = codigo;
+      document.getElementById("codigoSala").style.display = "none";
       
       document.getElementById("mensaje").innerText = 
         "Sala creada. Comparte el código con tus amigos. Esperando jugadores...";
 
       // Escuchar cambios
-      onSnapshot(salaRef, (snap) => {
-        const data = snap.data();
-        if (data) {
-          actualizarListaJugadores(data.jugadores, data.hostId);
-          actualizarChat(data.mensajes);
-          
-          // Escuchar reacciones
-          if (data.reacciones && data.reacciones.length > 0) {
-            const ultimaReaccion = data.reacciones[data.reacciones.length - 1];
-            // Solo mostrar si es reciente (menos de 2 segundos)
-            if (Date.now() - ultimaReaccion.timestamp < 2000) {
-              mostrarReaccionFlotante(ultimaReaccion.nombre, ultimaReaccion.emoji);
-            }
-          }
-          
-          // Escuchar countdown
-          if (data.countdown !== null && data.countdown !== undefined) {
-            mostrarCountdownSincronizado(data.countdown);
-          }
-          
-          const misDatos = data.jugadores[jugadorId];
-          if (misDatos && misDatos.estado && misDatos.estado !== "pendiente") {
-            if (!juegoIniciado) {
-              juegoIniciado = true;
-              document.getElementById('chatContainer').style.display = 'block';
-              if (esHost) {
-                document.getElementById("botonNuevaRonda").style.display = "inline-block";
-              }
-            }
-            document.getElementById("mensaje").innerText = 
-              "La palabra es: " + misDatos.estado;
-          }
+onSnapshot(salaRef, (snap) => {
+  const data = snap.data();
+  if (data) {
+    // 🚨 Verificar si sigo en la sala (por ID o por nombre)
+    const sigoEnSala = data.jugadores[jugadorId] || 
+                       Object.values(data.jugadores).some(j => j.nombre === miNombre);
+
+    if (!sigoEnSala) {
+  localStorage.setItem("kickMessage", "Fuiste kickeado de la sala.");
+  location.reload();
+  return;
+}
+
+    actualizarListaJugadores(data.jugadores, data.hostId);
+    actualizarChat(data.mensajes);
+
+    // Escuchar reacciones
+    if (data.reacciones && data.reacciones.length > 0) {
+      const ultimaReaccion = data.reacciones[data.reacciones.length - 1];
+      if (Date.now() - ultimaReaccion.timestamp < 2000) {
+        mostrarReaccionFlotante(ultimaReaccion.nombre, ultimaReaccion.emoji);
+      }
+    }
+
+    // Escuchar countdown
+    if (data.countdown !== null && data.countdown !== undefined) {
+      mostrarCountdownSincronizado(data.countdown);
+    }
+
+    const misDatos = data.jugadores[jugadorId];
+    if (misDatos && misDatos.estado && misDatos.estado !== "pendiente") {
+      if (!juegoIniciado) {
+        juegoIniciado = true;
+        document.getElementById('chatContainer').style.display = 'flex';
+        document.getElementById("colorSelector").style.display = "none";
+        if (esHost) {
+          document.getElementById("botonNuevaRonda").style.display = "inline-block";
         }
-      });
+      }
+      document.getElementById("mensaje").innerText =
+        "Tu rol es: " + misDatos.estado;
+    }
+  }
+});
     };
 
     // Unirse a sala
-    window.unirseSala = async function() {
-      miNombre = document.getElementById("nombreJugador").value.trim();
-      if (!miNombre) {
-        alert("Por favor ingresa tu nombre");
-        return;
-      }
+window.unirseSala = async function() {
+  miNombre = document.getElementById("nombreJugador").value.trim();
+  if (!miNombre) {
+    alert("Por favor ingresa tu nombre");
+    return;
+  }
 
-      const codigo = document.getElementById("codigoSala").value.toUpperCase();
-      const salaRef = doc(db, "salas", codigo);
+  const codigo = document.getElementById("codigoSala").value.toUpperCase();
+  const salaRef = doc(db, "salas", codigo);
 
-      const snapshot = await getDoc(salaRef);
-      if (!snapshot.exists()) {
-        alert("Esa sala no existe");
-        return;
-      }
+  const snapshot = await getDoc(salaRef);
+  if (!snapshot.exists()) {
+    alert("Esa sala no existe");
+    return;
+  }
 
-      salaActual = codigo;
+  const data = snapshot.data();
+  const jugadores = data.jugadores || {};
 
-      const data = snapshot.data();
-      const jugadores = data.jugadores || {};
-      jugadores[jugadorId] = { estado: "pendiente", nombre: miNombre };
+  // 🚨 Verificar si ya existe un jugador con ese nombre
+  const nombreRepetido = Object.values(jugadores).some(j => j.nombre.toLowerCase() === miNombre.toLowerCase());
+  if (nombreRepetido) {
+    alert("Ese nombre ya está en uso en esta sala. Elige otro.");
+    return;
+  }
+
+  salaActual = codigo;
+
+  // Asignar un color por defecto
+  miColor = coloresJugadores[Math.floor(Math.random() * coloresJugadores.length)];
+
+  jugadores[jugadorId] = { 
+    estado: "pendiente", 
+    nombre: miNombre,
+    color: miColor
+  };
+
+  await setDoc(salaRef, {
+    palabra: data.palabra,
+    impostor: data.impostor,
+    jugadores,
+    mensajes: data.mensajes || [],
+    countdown: data.countdown || null,
+    hostId: data.hostId,
+    reacciones: data.reacciones || [],
+    modoJuego: data.modoJuego || "normal"
+  });
+
+      // Obtener el modo de juego de la sala
+      modoJuego = data.modoJuego || "normal";
 
       await setDoc(salaRef, {
         palabra: data.palabra,
@@ -599,7 +1138,8 @@
         mensajes: data.mensajes || [],
         countdown: data.countdown || null,
         hostId: data.hostId,
-        reacciones: data.reacciones || []
+        reacciones: data.reacciones || [],
+        modoJuego: modoJuego
       });
 
       document.getElementById("codigoSala").style.display = "none";
@@ -607,45 +1147,75 @@
       document.querySelector('button[onclick="crearSala()"]').style.display = "none";
       document.querySelector('button[onclick="unirseSala()"]').style.display = "none";
 
+      // MOSTRAR EL CÓDIGO DE SALA
       const codigoDiv = document.getElementById("codigoSalaDisplay");
       codigoDiv.style.display = "block";
       document.getElementById("codigoTexto").textContent = codigo;
+
+      // MOSTRAR INDICADOR DE MODO
+      document.getElementById("modoIndicator").style.display = "block";
+      document.getElementById("modoTexto").textContent = 
+        modoJuego === 'normal' ? 'Normal' : 'Más Roles';
+
+      // MOSTRAR BOTÓN DE INFO DE ROLES (solo en modo Más Roles)
+      if (modoJuego === "masRoles") {
+        document.getElementById('btnInfoRoles').style.display = 'inline-block';
+      } else {
+        document.getElementById('btnInfoRoles').style.display = 'none';
+      }
+
+      // MOSTRAR SELECTOR DE COLORES
+      document.getElementById("colorSelector").style.display = "block";
+      crearSelectorColores();
+
+      // OCULTAR SELECTOR DE MODO (solo para el host)
+      document.getElementById("modoSelector").style.display = "none";
 
       document.getElementById("mensaje").innerText = 
         "Unido a sala " + codigo + ". Espera a que empiece el juego.";
 
       // Escuchar cambios
-      onSnapshot(salaRef, (snap) => {
-        const data = snap.data();
-        if (data) {
-          actualizarListaJugadores(data.jugadores, data.hostId);
-          actualizarChat(data.mensajes);
-          
-          // Escuchar reacciones
-          if (data.reacciones && data.reacciones.length > 0) {
-            const ultimaReaccion = data.reacciones[data.reacciones.length - 1];
-            // Solo mostrar si es reciente (menos de 2 segundos)
-            if (Date.now() - ultimaReaccion.timestamp < 2000) {
-              mostrarReaccionFlotante(ultimaReaccion.nombre, ultimaReaccion.emoji);
-            }
-          }
-          
-          // Escuchar countdown
-          if (data.countdown !== null && data.countdown !== undefined) {
-            mostrarCountdownSincronizado(data.countdown);
-          }
-          
-          const misDatos = data.jugadores[jugadorId];
-          if (misDatos && misDatos.estado && misDatos.estado !== "pendiente") {
-            if (!juegoIniciado) {
-              juegoIniciado = true;
-              document.getElementById('chatContainer').style.display = 'block';
-            }
-            document.getElementById("mensaje").innerText = 
-              "La palabra es: " + misDatos.estado;
-          }
-        }
-      });
+onSnapshot(salaRef, (snap) => {
+  const data = snap.data();
+  if (data) {
+    // 🚨 Verificar si sigo en la sala (por ID o por nombre)
+    const sigoEnSala = data.jugadores[jugadorId] || 
+                       Object.values(data.jugadores).some(j => j.nombre === miNombre);
+
+    if (!sigoEnSala) {
+  localStorage.setItem("kickMessage", "Fuiste kickeado de la sala.");
+  location.reload();
+  return;
+}
+
+    actualizarListaJugadores(data.jugadores, data.hostId);
+    actualizarChat(data.mensajes);
+
+    // Escuchar reacciones
+    if (data.reacciones && data.reacciones.length > 0) {
+      const ultimaReaccion = data.reacciones[data.reacciones.length - 1];
+      if (Date.now() - ultimaReaccion.timestamp < 2000) {
+        mostrarReaccionFlotante(ultimaReaccion.nombre, ultimaReaccion.emoji);
+      }
+    }
+
+    // Escuchar countdown
+    if (data.countdown !== null && data.countdown !== undefined) {
+      mostrarCountdownSincronizado(data.countdown);
+    }
+
+    const misDatos = data.jugadores[jugadorId];
+    if (misDatos && misDatos.estado && misDatos.estado !== "pendiente") {
+      if (!juegoIniciado) {
+        juegoIniciado = true;
+        document.getElementById('chatContainer').style.display = 'flex';
+        document.getElementById("colorSelector").style.display = "none";
+      }
+      document.getElementById("mensaje").innerText =
+        "Tu rol es: " + misDatos.estado;
+    }
+  }
+});
     };
 
     // Asignar roles
@@ -667,18 +1237,69 @@
 
       sonidoAsignarRoles();
 
-      // Elegir impostor
-      const impostorIndex = Math.floor(Math.random() * jugadores.length);
-      const impostorId = jugadores[impostorIndex];
-
+      // Elegir roles según el modo de juego
       let nuevosRoles = {};
-      jugadores.forEach((id, i) => {
-        const jugadorData = data.jugadores[id];
-        nuevosRoles[id] = {
-          estado: (i === impostorIndex) ? "IMPOSTOR" : data.palabra,
-          nombre: jugadorData.nombre
-        };
-      });
+      const palabraPrincipal = data.palabra;
+      
+      if (modoJuego === "normal") {
+        // Modo normal: 1 impostor, el resto con la misma palabra
+        const impostorIndex = Math.floor(Math.random() * jugadores.length);
+        
+        jugadores.forEach((id, i) => {
+          const jugadorData = data.jugadores[id];
+          nuevosRoles[id] = {
+            estado: (i === impostorIndex) ? "IMPOSTOR" : palabraPrincipal,
+            nombre: jugadorData.nombre,
+            color: jugadorData.color
+          };
+        });
+      } else {
+        // Modo Más Roles: impostor, confundido, saboteador, y el resto con la palabra principal
+        const indicesDisponibles = [...Array(jugadores.length).keys()];
+        
+        // Elegir impostor
+        const impostorIndex = Math.floor(Math.random() * indicesDisponibles.length);
+        const impostorId = indicesDisponibles.splice(impostorIndex, 1)[0];
+        
+        // Elegir confundido (si hay al menos 4 jugadores)
+        let confundidoIndex = -1;
+        if (indicesDisponibles.length >= 3) {
+          confundidoIndex = Math.floor(Math.random() * indicesDisponibles.length);
+          const confundidoId = indicesDisponibles.splice(confundidoIndex, 1)[0];
+        }
+        
+        // Elegir saboteador (si hay al menos 5 jugadores)
+        let saboteadorIndex = -1;
+        if (indicesDisponibles.length >= 2) {
+          saboteadorIndex = Math.floor(Math.random() * indicesDisponibles.length);
+          const saboteadorId = indicesDisponibles.splice(saboteadorIndex, 1)[0];
+        }
+        
+        // Asignar roles
+        jugadores.forEach((id, i) => {
+          const jugadorData = data.jugadores[id];
+          let rol = palabraPrincipal;
+          
+          if (i === impostorIndex) {
+            rol = "IMPOSTOR";
+          } else if (i === confundidoIndex) {
+            // El confundido recibe una palabra diferente
+            let palabraConfundido;
+            do {
+              palabraConfundido = palabras[Math.floor(Math.random() * palabras.length)];
+            } while (palabraConfundido === palabraPrincipal);
+            rol = `CONFUNDIDO: ${palabraConfundido}`;
+          } else if (i === saboteadorIndex) {
+            rol = `SABOTEADOR: ${palabraPrincipal}`;
+          }
+          
+          nuevosRoles[id] = {
+            estado: rol,
+            nombre: jugadorData.nombre,
+            color: jugadorData.color
+          };
+        });
+      }
 
       // Ejecutar countdown
       let count = 3;
@@ -693,13 +1314,14 @@
           // Asignar roles después del countdown
           setTimeout(async () => {
             await setDoc(salaRef, {
-              palabra: data.palabra,
-              impostor: impostorId,
+              palabra: palabraPrincipal,
+              impostor: Object.keys(nuevosRoles).find(id => nuevosRoles[id].estado === "IMPOSTOR"),
               jugadores: nuevosRoles,
               mensajes: data.mensajes || [],
               countdown: -1,
               hostId: data.hostId,
-              reacciones: data.reacciones || []
+              reacciones: data.reacciones || [],
+              modoJuego: modoJuego
             });
             
             juegoIniciado = true;
@@ -728,47 +1350,46 @@
       }
 
       const nuevaPalabra = palabras[Math.floor(Math.random() * palabras.length)];
-      const impostorIndex = Math.floor(Math.random() * jugadores.length);
-      const impostorId = jugadores[impostorIndex];
 
-      let nuevosRoles = {};
-      jugadores.forEach((id, i) => {
+      // Resetear estados
+      let nuevosEstados = {};
+      jugadores.forEach(id => {
         const jugadorData = data.jugadores[id];
-        nuevosRoles[id] = {
-          estado: (i === impostorIndex) ? "IMPOSTOR" : nuevaPalabra,
-          nombre: jugadorData.nombre
+        nuevosEstados[id] = {
+          estado: "pendiente",
+          nombre: jugadorData.nombre,
+          color: jugadorData.color
         };
       });
 
-      // Ejecutar countdown
-      let count = 3;
-      
-      const intervalo = setInterval(async () => {
-        if (count >= 0) {
-          await updateDoc(salaRef, { countdown: count });
-          count--;
-        } else {
-          clearInterval(intervalo);
-          
-          setTimeout(async () => {
-            await setDoc(salaRef, {
-              palabra: nuevaPalabra,
-              impostor: impostorId,
-              jugadores: nuevosRoles,
-              mensajes: data.mensajes || [],
-              countdown: -1,
-              hostId: data.hostId,
-              reacciones: data.reacciones || []
-            });
-          }, 1000);
-        }
-      }, 1000);
+      await setDoc(salaRef, {
+        palabra: nuevaPalabra,
+        impostor: null,
+        jugadores: nuevosEstados,
+        mensajes: data.mensajes || [],
+        countdown: null,
+        hostId: data.hostId,
+        reacciones: data.reacciones || [],
+        modoJuego: modoJuego
+      });
+
+      juegoIniciado = false;
+      document.getElementById("mensaje").innerText = 
+        "Nueva ronda. Esperando jugadores...";
+      document.getElementById("botonAsignar").style.display = "inline-block";
+      document.getElementById("colorSelector").style.display = "block";
     };
 
-    // Símbolos animados
     window.addEventListener('DOMContentLoaded', function() {
+      // 🚨 Mostrar mensaje si fui kickeado
+  const msg = localStorage.getItem("kickMessage");
+  if (msg) {
+    alert(msg);
+    localStorage.removeItem("kickMessage"); // limpiar para no repetir
+  }
+     // Símbolos animados    
       const container = document.getElementById('symbols');
-      const simbolos = ['?', '!', '!?', '❓', '❔', '❗​', '❕​', '‼️', '⁉️​'];
+      const simbolos = ['?', '!', '!?', '❓', '❔', '❗', '❕', '‼️', '⁉️'];
       const elementos = [];
       
       for (let i = 0; i < 8; i++) {
@@ -822,6 +1443,12 @@
       }
       
       animar();
+      
+      // Configurar selector de modo de juego
+      configurarSelectorModo();
+      
+      // Mostrar selector de modo al cargar la página
+      document.getElementById("modoSelector").style.display = "block";
     });
   </script>
   <script>
@@ -836,53 +1463,5 @@
       }
     }
   </script>
-</head>
-<body>
-  <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">&#9728;&#65039;</button>
-  <div class="mesh-gradient"></div>
-  <div class="blob blob1"></div>
-  <div class="blob blob2"></div>
-  <div class="blob blob3"></div>
-  <div class="countdown-overlay" id="countdownOverlay">
-    <div class="countdown-number" id="countdownNumber">3</div>
-  </div>
-  <div class="background-symbols" id="symbols"></div>
-  <div class="card">
-    <h2>Juego del Impostor</h2>
-    <p id="mensaje">Crea una sala o únete con un código</p>
-    
-    <div class="codigo-sala" id="codigoSalaDisplay">
-      <span id="codigoTexto"></span>
-      <button class="btn-copiar" onclick="copiarCodigo()">📋 Copiar</button>
-    </div>
-    
-    <div class="jugadores-info" id="jugadoresInfo">
-      <h3>Jugadores en sala: <span id="contadorJugadores">0</span></h3>
-      <ul class="lista-jugadores" id="listaJugadores"></ul>
-    </div>
-    
-    <input id="nombreJugador" type="text" placeholder="Tu nombre"><br>
-    <button onclick="crearSala()">Crear Sala</button><br>
-    <input id="codigoSala" placeholder="Código de sala">
-    <button onclick="unirseSala()">Unirse</button><br>
-    <button id="botonAsignar" onclick="asignarRoles()">Asignar Roles (Host)</button>
-    <button id="botonNuevaRonda" onclick="nuevaRonda()">🔄 Nueva Ronda</button>
-    
-    <div class="chat-container" id="chatContainer">
-      <div class="chat-messages" id="chatMessages"></div>
-      <div class="reacciones-container">
-        <button class="btn-reaccion" onclick="enviarReaccion('👍')" title="Me gusta">👍</button>
-        <button class="btn-reaccion" onclick="enviarReaccion('👎')" title="No me gusta">👎</button>
-        <button class="btn-reaccion" onclick="enviarReaccion('🤔')" title="Sospechoso">🤔</button>
-        <button class="btn-reaccion" onclick="enviarReaccion('😱')" title="Sorpresa">😱</button>
-        <button class="btn-reaccion" onclick="enviarReaccion('🤣​')" title="Risa">🤣​</button>
-        <button class="btn-reaccion" onclick="enviarReaccion('☠️')" title="Calavera">☠️</button>
-      </div>
-      <div class="chat-input-container">
-        <input id="chatInput" type="text" placeholder="Escribe un mensaje..." onkeypress="handleChatKeyPress(event)">
-        <button onclick="enviarMensaje()">Enviar</button>
-      </div>
-    </div>
-  </div>
 </body>
 </html>
