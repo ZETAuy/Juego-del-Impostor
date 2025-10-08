@@ -11,9 +11,9 @@
       --bg-secondary: #333;
       --bg-tertiary: #444;
       --text-primary: #fff;
-      --text-secondary: #4cafef;
-      --button-bg: #4cafef;
-      --button-text: #111;
+      --text-secondary: #667eea;
+      --button-bg: linear-gradient(to right, #667eea, #764ba2);
+      --button-text: #ffffff;
       --shadow: rgba(255,255,255,0.2);
     }
     
@@ -22,15 +22,15 @@
       --bg-secondary: #ffffff;
       --bg-tertiary: #e0e0e0;
       --text-primary: #222;
-      --text-secondary: #2196F3;
-      --button-bg: #2196F3;
-      --button-text: #fff;
+      --text-secondary: #fcb69f;
+      --button-bg: linear-gradient(to right, #fed6e3, #fcb69f);
+      --button-text: #000000;
       --shadow: rgba(0,0,0,0.1);
     }
     
     body {
       font-family: Arial, sans-serif;
-      background: #B8B8FC;
+      background: #d5d5ec;
       color: var(--text-primary);
       display: flex;
       flex-direction: column;
@@ -91,8 +91,7 @@
       padding: 20px;
       border-radius: 10px;
       text-align: center;
-      width: 90%; /* ocupa casi toda la pantalla en móvil */
-      max-width: 400px;  /* no más de 400px en desktop */
+      max-width: 900px;  /* no más de 400px en desktop (me lo pase por el orto) */
       max-height: 90vh;
       display: flex;
       flex-direction: column;
@@ -171,12 +170,43 @@
       margin: 10px 0;
       padding: 10px;
       background: var(--bg-secondary);
+      text-shadow: 0 0 10px rgba(143, 102, 255, 0.5);
       border-radius: 8px;
       transition: background 0.3s ease;
     }
-    .codigo-sala span { font-size: 24px; font-weight: bold; color: var(--text-secondary); letter-spacing: 2px; }
-    .btn-copiar { background: #5cb85c; margin-left: 10px; padding: 8px 15px; font-size: 14px; color: #fff; }
-    .btn-copiar:hover { background: #4cae4c; }
+    .codigo-sala span { font-size: 28px; font-weight: bold; color: var(--text-secondary); letter-spacing: 2px; }
+    
+    /* NUEVO: Estilo para mostrar URL completa */
+    .url-display {
+      background-color: rgba(0, 0, 0, 0.3);
+      padding: 10px;
+      border-radius: 8px;
+      margin: 10px 0;
+      word-break: break-all;
+      font-family: monospace;
+      font-size: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: none;
+    }
+    
+    .btn-copiar { 
+      background: linear-gradient(to right, #b7ea66, #4ba252); 
+      margin: 5px;
+      padding: 8px 14px; 
+      font-size: 14px; 
+      border-radius: 15px;
+      color: #fff; 
+    }
+    
+    /* NUEVO: Botón volver al inicio */
+    .btn-volver { 
+      background: linear-gradient(to right, #ff8a00, #da1b60); 
+      margin: 10px 5px;
+      padding: 10px 20px; 
+      font-size: 14px; 
+      border-radius: 15px;
+      color: #fff; 
+    }
     
     input[type="text"], select {
       width: calc(100% - 40px);
@@ -587,7 +617,7 @@
 
   .card {
     width: 90%;
-    max-width: 400px;
+    max-width: 800px;
     font-size: 14px;
     padding: 15px;
   }
@@ -612,6 +642,11 @@
   .btn-kick {
     width: 100%;
     margin-top: 5px;
+  }
+
+  .url-display {
+    font-size: 10px;
+    padding: 8px;
   }
 }
 
@@ -644,7 +679,7 @@
     <!-- Indicador de categoría -->
     <div class="categoria-indicator" id="categoriaIndicator">
       Categoría: <span id="categoriaTexto">Aleatoria</span>
-      <button class="btn-info-roles" onclick="toggleCategoriaSelector()" style="margin-left: 8px;">🎯 Cambiar</button>
+      <button class="btn-info-roles" onclick="toggleCategoriaSelector()" style="margin-left: 8px;">Cambiar</button>
     </div>
 
     <!-- Indicador de modo de juego -->
@@ -688,9 +723,15 @@
       </div>
     </div>
     
+    <!-- NUEVO: Mostrar URL completa -->
+    <div class="url-display" id="urlDisplay"></div>
+    
     <div class="codigo-sala" id="codigoSalaDisplay">
       <span id="codigoTexto"></span>
-      <button class="btn-copiar" onclick="copiarCodigo()">📋 Copiar</button>
+      <!-- QUITAMOS el botón de copiar código y dejamos solo el de copiar URL -->
+      <button class="btn-copiar" onclick="copiarURL()">Copiar URL</button>
+      <!-- NUEVO: Botón para volver al inicio -->
+      <button class="btn-volver" onclick="volverAlInicio()">Volver al Inicio</button>
     </div>
     
     <!-- Selector de modo de juego -->
@@ -714,7 +755,7 @@
       </div>
       <!-- BOTÓN PARA CONTINUAR A CATEGORÍA -->
       <button onclick="continuarACategoria()" style="margin-top: 15px; padding: 10px; background: var(--button-bg); color: var(--button-text); border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
-        ✅ Continuar a Selección de Categoría
+      Continuar a Selección de Categoría
       </button>
     </div>
     
@@ -736,7 +777,7 @@
     <input id="codigoSala" placeholder="Código de sala">
     <button onclick="unirseSala()">Unirse</button><br>
     <button id="botonAsignar" onclick="asignarRoles()">Asignar Roles (Host)</button>
-    <button id="botonNuevaRonda" onclick="nuevaRonda()">🔄 Nueva Ronda</button>
+    <button id="botonNuevaRonda" onclick="nuevaRonda()">Nueva Ronda</button>
   </div>
   
   <!-- CHAT CONTAINER - FUERA DE LA TARJETA PRINCIPAL Y SIN BOTÓN DE CERRAR -->
@@ -810,7 +851,7 @@
       </div>
     </div>
     <button class="btn-confirmar-categoria" onclick="confirmarCategoria()" style="margin-top: 15px; padding: 10px; background: var(--button-bg); color: var(--button-text); border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
-      ✅ Confirmar Categoría
+    Confirmar Categoría
     </button>
   </div>
 
@@ -876,7 +917,7 @@
     // Función para mostrar/ocultar información de roles
     window.toggleInfoRoles = function() {
       const rolesInfo = document.getElementById('rolesInfo');
-      if (rolesInfo.style.display === 'none' || rolesInfo.style.display === '') {
+      if (rolesInfo.style.display === 'none' || rolesInfo.styleInfo.display === '') {
         rolesInfo.style.display = 'block';
       } else {
         rolesInfo.style.display = 'none';
@@ -1028,33 +1069,37 @@
       numberElement.style.animation = 'countdownPulse 1s ease-out';
     }
 
-    // Copiar código
-    window.copiarCodigo = function() {
-      if (!salaActual) return;
-      sonidoCopiar();
-      navigator.clipboard.writeText(salaActual).then(() => {
-        const btn = document.querySelector('.btn-copiar');
-        const textoOriginal = btn.textContent;
-        btn.textContent = '✓ Copiado!';
-        setTimeout(() => {
-          btn.textContent = textoOriginal;
-        }, 2000);
-      });
-    };
+    // NUEVO: Función para mostrar la URL completa
+    function mostrarURLCompleta() {
+      const urlDisplay = document.getElementById('urlDisplay');
+      urlDisplay.textContent = window.location.href;
+      urlDisplay.style.display = 'block';
+    }
 
-    // Copiar URL completa
+    // MODIFICADO: Copiar URL completa (no solo el código)
     window.copiarURL = function() {
       if (!salaActual) return;
       sonidoCopiar();
       const urlCompleta = window.location.href;
       navigator.clipboard.writeText(urlCompleta).then(() => {
-        const btn = document.querySelector('.btn-copiar-url');
+        const btn = document.querySelector('.btn-copiar');
         const textoOriginal = btn.textContent;
         btn.textContent = '✓ URL Copiada!';
         setTimeout(() => {
           btn.textContent = textoOriginal;
         }, 2000);
       });
+    };
+
+    // NUEVO: Función para volver al inicio
+    window.volverAlInicio = function() {
+      if (confirm('¿Estás seguro de que quieres volver al inicio? Perderás tu conexión a la sala actual.')) {
+        // Restaurar la URL original
+        history.pushState({}, '', window.location.pathname);
+        
+        // Recargar la página para reiniciar completamente
+        location.reload();
+      }
     };
 
     // Enviar reacción
@@ -1195,14 +1240,14 @@
   if (li.querySelector(".btn-kick")) return; // ya existe botón
 
   const btn = document.createElement("button");
-  btn.textContent = "❌ Kickear";
+  btn.textContent = "Kickear";
   btn.className = "btn-kick";
   btn.style.marginLeft = "10px";
-  btn.style.background = "#e74c3c";
+  btn.style.background = "linear-gradient(to right, #ff0000, #da411b)";
   btn.style.color = "#fff";
   btn.style.border = "none";
   btn.style.padding = "4px 8px";
-  btn.style.borderRadius = "5px";
+  btn.style.borderRadius = "15px";
   btn.style.cursor = "pointer";
 
   btn.addEventListener("click", async (event) => {
@@ -1447,18 +1492,12 @@ async function cambiarCategoria(nuevaCategoria) {
       const nuevaURL = window.location.origin + window.location.pathname + '?sala=' + codigo;
       history.pushState({ sala: codigo }, '', nuevaURL);
       
-      // MOSTRAR EL CÓDIGO DE SALA CON BOTÓN PARA COPIAR URL COMPLETA
+      // NUEVO: Mostrar URL completa
+      mostrarURLCompleta();
+      
+      // MOSTRAR EL CÓDIGO DE SALA (solo el código, sin botón de copiar código)
       document.getElementById("codigoSalaDisplay").style.display = "block";
       document.getElementById("codigoTexto").textContent = codigo;
-      
-      // AÑADIR BOTÓN PARA COPIAR URL COMPLETA
-      const btnCopiarURL = document.createElement('button');
-      btnCopiarURL.className = 'btn-copiar-url';
-      btnCopiarURL.textContent = '📋 Copiar URL';
-      btnCopiarURL.onclick = copiarURL;
-      btnCopiarURL.style.marginLeft = '10px';
-      btnCopiarURL.style.background = '#2196F3';
-      document.getElementById("codigoSalaDisplay").appendChild(btnCopiarURL);
       
       // MOSTRAR INDICADOR DE CATEGORÍA
       document.getElementById("categoriaIndicator").style.display = "block";
@@ -1485,7 +1524,7 @@ async function cambiarCategoria(nuevaCategoria) {
       document.getElementById("botonAsignar").style.display = "inline-block";
       document.getElementById("modoSelector").style.display = "none";
       document.getElementById("mensaje").innerText = 
-        "Sala creada. Comparte el código con tus amigos. Esperando jugadores...";
+        "Sala creada. Comparte la URL con tus amigos. Esperando jugadores...";
 
       // Escuchar cambios
       onSnapshot(salaRef, (snap) => {
@@ -1597,24 +1636,18 @@ window.unirseSala = async function() {
       const nuevaURL = window.location.origin + window.location.pathname + '?sala=' + codigo;
       history.pushState({ sala: codigo }, '', nuevaURL);
 
+      // NUEVO: Mostrar URL completa
+      mostrarURLCompleta();
+
       document.getElementById("codigoSala").style.display = "none";
       document.getElementById("nombreJugador").style.display = "none";
       document.querySelector('button[onclick="crearSala()"]').style.display = "none";
       document.querySelector('button[onclick="unirseSala()"]').style.display = "none";
 
-      // MOSTRAR EL CÓDIGO DE SALA CON BOTÓN PARA COPIAR URL COMPLETA
+      // MOSTRAR EL CÓDIGO DE SALA (solo el código, sin botón de copiar código)
       const codigoDiv = document.getElementById("codigoSalaDisplay");
       codigoDiv.style.display = "block";
       document.getElementById("codigoTexto").textContent = codigo;
-      
-      // AÑADIR BOTÓN PARA COPIAR URL COMPLETA
-      const btnCopiarURL = document.createElement('button');
-      btnCopiarURL.className = 'btn-copiar-url';
-      btnCopiarURL.textContent = '📋 Copiar URL';
-      btnCopiarURL.onclick = copiarURL;
-      btnCopiarURL.style.marginLeft = '10px';
-      btnCopiarURL.style.background = '#2196F3';
-      codigoDiv.appendChild(btnCopiarURL);
 
       // MOSTRAR INDICADOR DE MODO
       document.getElementById("modoIndicator").style.display = "block";
