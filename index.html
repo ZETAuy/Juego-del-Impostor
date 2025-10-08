@@ -1042,6 +1042,21 @@
       });
     };
 
+    // Copiar URL completa
+    window.copiarURL = function() {
+      if (!salaActual) return;
+      sonidoCopiar();
+      const urlCompleta = window.location.href;
+      navigator.clipboard.writeText(urlCompleta).then(() => {
+        const btn = document.querySelector('.btn-copiar-url');
+        const textoOriginal = btn.textContent;
+        btn.textContent = '✓ URL Copiada!';
+        setTimeout(() => {
+          btn.textContent = textoOriginal;
+        }, 2000);
+      });
+    };
+
     // Enviar reacción
     window.enviarReaccion = async function(emoji) {
       if (!salaActual) return;
@@ -1428,9 +1443,22 @@ async function cambiarCategoria(nuevaCategoria) {
       esHost = true;
       cantidadJugadoresAnterior = 1;
       
-      // MOSTRAR EL CÓDIGO DE SALA
+      // ACTUALIZAR LA URL CON EL CÓDIGO DE LA SALA
+      const nuevaURL = window.location.origin + window.location.pathname + '?sala=' + codigo;
+      history.pushState({ sala: codigo }, '', nuevaURL);
+      
+      // MOSTRAR EL CÓDIGO DE SALA CON BOTÓN PARA COPIAR URL COMPLETA
       document.getElementById("codigoSalaDisplay").style.display = "block";
       document.getElementById("codigoTexto").textContent = codigo;
+      
+      // AÑADIR BOTÓN PARA COPIAR URL COMPLETA
+      const btnCopiarURL = document.createElement('button');
+      btnCopiarURL.className = 'btn-copiar-url';
+      btnCopiarURL.textContent = '📋 Copiar URL';
+      btnCopiarURL.onclick = copiarURL;
+      btnCopiarURL.style.marginLeft = '10px';
+      btnCopiarURL.style.background = '#2196F3';
+      document.getElementById("codigoSalaDisplay").appendChild(btnCopiarURL);
       
       // MOSTRAR INDICADOR DE CATEGORÍA
       document.getElementById("categoriaIndicator").style.display = "block";
@@ -1565,15 +1593,28 @@ window.unirseSala = async function() {
   jugadores: jugadores
 });
 
+      // ACTUALIZAR LA URL CON EL CÓDIGO DE LA SALA
+      const nuevaURL = window.location.origin + window.location.pathname + '?sala=' + codigo;
+      history.pushState({ sala: codigo }, '', nuevaURL);
+
       document.getElementById("codigoSala").style.display = "none";
       document.getElementById("nombreJugador").style.display = "none";
       document.querySelector('button[onclick="crearSala()"]').style.display = "none";
       document.querySelector('button[onclick="unirseSala()"]').style.display = "none";
 
-      // MOSTRAR EL CÓDIGO DE SALA
+      // MOSTRAR EL CÓDIGO DE SALA CON BOTÓN PARA COPIAR URL COMPLETA
       const codigoDiv = document.getElementById("codigoSalaDisplay");
       codigoDiv.style.display = "block";
       document.getElementById("codigoTexto").textContent = codigo;
+      
+      // AÑADIR BOTÓN PARA COPIAR URL COMPLETA
+      const btnCopiarURL = document.createElement('button');
+      btnCopiarURL.className = 'btn-copiar-url';
+      btnCopiarURL.textContent = '📋 Copiar URL';
+      btnCopiarURL.onclick = copiarURL;
+      btnCopiarURL.style.marginLeft = '10px';
+      btnCopiarURL.style.background = '#2196F3';
+      codigoDiv.appendChild(btnCopiarURL);
 
       // MOSTRAR INDICADOR DE MODO
       document.getElementById("modoIndicator").style.display = "block";
@@ -1822,7 +1863,22 @@ window.nuevaRonda = async function() {
       document.getElementById("colorSelector").style.display = "block";
     };
 
+    // Función para verificar si hay una sala en la URL al cargar
+    function verificarSalaEnURL() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const salaParam = urlParams.get('sala');
+      
+      if (salaParam) {
+        // Si hay una sala en la URL, rellenar automáticamente el campo y mostrar mensaje
+        document.getElementById('codigoSala').value = salaParam;
+        document.getElementById('mensaje').innerText = 'Se detectó una sala en la URL. Ingresa tu nombre y haz clic en "Unirse"';
+      }
+    }
+
     window.addEventListener('DOMContentLoaded', function() {
+      // Verificar si hay una sala en la URL al cargar
+      verificarSalaEnURL();
+      
       // 🚨 Mostrar mensaje si fui kickeado
   const msg = localStorage.getItem("kickMessage");
   if (msg) {
