@@ -21,7 +21,7 @@
     }
     
     body {
-      font-family: Arial, sans-serif;
+      font-family: "Open Sans", sans-serif;
       background: #d5d5ec;
       color: var(--text-primary);
       display: flex;
@@ -35,6 +35,11 @@
       transition: background 0.3s ease;
     }
     
+    h1 {
+      font-family: "Merriweather", serif;
+      font-size: 30px;
+    }
+
     /* Mesh Gradient Background */
     .mesh-gradient {
       position: fixed;
