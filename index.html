@@ -6,7 +6,7 @@
   <title>Juego del Impostor</title>
   <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
   <link rel="stylesheet" href="styles.css">
-
+  
 </head>
 <body>
   <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">&#9728;&#65039;</button>
@@ -1078,7 +1078,7 @@ if (misDatos && misDatos.estado) {
 });
     };
 
-    // Asignar roles
+    // Asignar roles - CORREGIDO
     window.asignarRoles = async function() {
       if (!salaActual) {
         alert("Primero crea o únete a una sala");
@@ -1089,6 +1089,8 @@ if (misDatos && misDatos.estado) {
       const snapshot = await getDoc(salaRef);
       const data = snapshot.data();
       const jugadores = Object.keys(data.jugadores);
+      
+      // 🚨 CORRECCIÓN: Usar la categoría de la sala actual
       const categoriaActual = data.categoria || "aleatoria";
 
       if (jugadores.length < 3) {
@@ -1141,16 +1143,16 @@ if (misDatos && misDatos.estado) {
           const jugadorData = data.jugadores[id];
           let rol = palabraPrincipal;
           
-          if (i === impostorIndex) {
+          if (i === impostorId) {
             rol = "IMPOSTOR";
-          } else if (i === confundidoIndex) {
-          // El confundido recibe una palabra diferente de la misma categoría
-          let palabraConfundido;
-          do {
-            palabraConfundido = obtenerPalabraAleatoria(categoriaActual);
-          } while (palabraConfundido === palabraPrincipal);
-          rol = `CONFUNDIDO: ${palabraConfundido}`;
-          } else if (i === saboteadorIndex) {
+          } else if (i === confundidoId) {
+            // El confundido recibe una palabra diferente de la misma categoría
+            let palabraConfundido;
+            do {
+              palabraConfundido = obtenerPalabraAleatoria(categoriaActual);
+            } while (palabraConfundido === palabraPrincipal);
+            rol = `CONFUNDIDO: ${palabraConfundido}`;
+          } else if (i === saboteadorId) {
             rol = `SABOTEADOR: ${palabraPrincipal}`;
           }
           
@@ -1182,7 +1184,8 @@ if (misDatos && misDatos.estado) {
               countdown: -1,
               hostId: data.hostId,
               reacciones: data.reacciones || [],
-              modoJuego: modoJuego
+              modoJuego: modoJuego,
+              categoria: categoriaActual // 🚨 CORRECCIÓN: Preservar categoría
             });
             
             juegoIniciado = true;
@@ -1191,57 +1194,62 @@ if (misDatos && misDatos.estado) {
       }, 1000);
     };
 
-    // Nueva ronda
-window.nuevaRonda = async function() {
-  if (!salaActual || !esHost) {
-    alert("Solo el host puede iniciar una nueva ronda");
-    return;
-  }
+    // Nueva ronda - CORREGIDO
+    window.nuevaRonda = async function() {
+      if (!salaActual || !esHost) {
+        alert("Solo el host puede iniciar una nueva ronda");
+        return;
+      }
 
-  sonidoNuevaRonda();
+      sonidoNuevaRonda();
 
-  const salaRef = doc(db, "salas", salaActual);
-  const snapshot = await getDoc(salaRef);
-  const data = snapshot.data();
-  const jugadores = Object.keys(data.jugadores);
-  const categoriaActual = data.categoria || "aleatoria";
+      const salaRef = doc(db, "salas", salaActual);
+      const snapshot = await getDoc(salaRef);
+      const data = snapshot.data();
+      const jugadores = Object.keys(data.jugadores);
+      
+      // 🚨 CORRECCIÓN: Usar la categoría actual de la sala
+      const categoriaActual = data.categoria || "aleatoria";
 
-  if (jugadores.length < 3) {
-    alert("Necesitan al menos 3 jugadores");
-    return;
-  }
+      if (jugadores.length < 3) {
+        alert("Necesitan al menos 3 jugadores");
+        return;
+      }
 
-  const nuevaPalabra = obtenerPalabraAleatoria(categoriaActual);
+      // 🚨 CORRECCIÓN: Usar la categoría actual para la nueva palabra
+      const nuevaPalabra = obtenerPalabraAleatoria(categoriaActual);
 
-  // Resetear estados
-  let nuevosEstados = {};
-  jugadores.forEach(id => {
-    const jugadorData = data.jugadores[id];
-    nuevosEstados[id] = {
-      estado: "pendiente",
-      nombre: jugadorData.nombre,
-      color: jugadorData.color
+      // Resetear estados
+      let nuevosEstados = {};
+      jugadores.forEach(id => {
+        const jugadorData = data.jugadores[id];
+        nuevosEstados[id] = {
+          estado: "pendiente",
+          nombre: jugadorData.nombre,
+          color: jugadorData.color
+        };
+      });
+
+      // 🚨 CORRECCIÓN: Arreglar la sintaxis
+      await setDoc(salaRef, {
+        palabra: nuevaPalabra,
+        impostor: null,
+        jugadores: nuevosEstados,
+        mensajes: [], // 🚨 limpiar el chat en cada nueva ronda
+        countdown: null,
+        hostId: data.hostId,
+        reacciones: [],
+        modoJuego: data.modoJuego, // 🚨 CORRECCIÓN: Coma agregada
+        categoria: data.categoria // 🚨 CORRECCIÓN: Preservar la categoría
+      });
+
+      juegoIniciado = false;
+      document.getElementById("mensaje").innerText = 
+        "Nueva ronda. Esperando jugadores...";
+      document.getElementById("botonAsignar").style.display = "inline-block";
+      document.getElementById("colorSelector").style.display = "block";
+      document.getElementById("botonNuevaRonda").style.display = "none"; // 🚨 CORRECCIÓN: Ocultar botón
     };
-  });
-
-  await setDoc(salaRef, {
-    palabra: nuevaPalabra,
-    impostor: null,
-    jugadores: nuevosEstados,
-    mensajes: [], // 🚨 limpiar el chat en cada nueva ronda
-    countdown: null,
-    hostId: data.hostId,
-    reacciones: [],
-    modoJuego: data.modoJuego, // 🚨 CORRECCIÓN: Agregar coma aquí
-    categoria: data.categoria // 🚨 CORRECCIÓN: Preservar la categoría
-  });
-
-  juegoIniciado = false;
-  document.getElementById("mensaje").innerText = 
-    "Nueva ronda. Esperando jugadores...";
-  document.getElementById("botonAsignar").style.display = "inline-block";
-  document.getElementById("colorSelector").style.display = "block";
-};
 
     // Función para verificar si hay una sala en la URL al cargar
     function verificarSalaEnURL() {
