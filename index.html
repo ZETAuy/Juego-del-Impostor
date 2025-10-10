@@ -203,7 +203,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, doc, setDoc, getDoc, onSnapshot, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, onSnapshot, updateDoc, arrayUnion, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAnQJm-YfIgkz5HZ8ebkPqaxRICapy98N8",
@@ -437,16 +437,35 @@
       });
     };
 
-    // NUEVO: Función para volver al inicio
-    window.volverAlInicio = function() {
-      if (confirm('¿Estás seguro de que quieres volver al inicio? Perderás tu conexión a la sala actual.')) {
-        // Restaurar la URL original
-        history.pushState({}, '', window.location.pathname);
-        
-        // Recargar la página para reiniciar completamente
-        location.reload();
-      }
-    };
+    // NUEVO: Función para volver al inicio - MODREGIDA
+window.volverAlInicio = async function() {
+  if (confirm('¿Estás seguro de que quieres volver al inicio?' + (esHost ? ' Esto cerrará la sala para todos los jugadores.' : ''))) {
+    
+    // Si soy el host, eliminar toda la sala de Firestore
+    if (esHost && salaActual) {
+      const salaRef = doc(db, "salas", salaActual);
+      
+      // 🚨 PRIMERO: Restaurar la URL para todos los jugadores
+      await setDoc(salaRef, {
+        hostSalio: true,
+        urlRedireccion: window.location.origin + window.location.pathname, // URL sin parámetros
+        mensajeEspecial: "El host ha cerrado la sala. Volviendo al inicio..."
+      });
+      
+      // Esperar un momento para que los demás jugadores reciban el mensaje
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Luego eliminar la sala completamente
+      await deleteDoc(salaRef);
+    }
+    
+    // Restaurar la URL original
+    history.pushState({}, '', window.location.pathname);
+    
+    // Recargar la página para reiniciar completamente
+    location.reload();
+  }
+};
 
     // Enviar reacción
     window.enviarReaccion = async function(emoji) {
@@ -827,7 +846,8 @@ async function cambiarCategoria(nuevaCategoria) {
         hostId: jugadorId,
         reacciones: [],
         modoJuego: modoJuego,
-        categoria: categoriaJuego
+        categoria: categoriaJuego,
+        hostSalio: false // 🚨 NUEVO: Campo para controlar si el host salió
       });
 
       salaActual = codigo;
@@ -876,6 +896,15 @@ async function cambiarCategoria(nuevaCategoria) {
       onSnapshot(salaRef, (snap) => {
         const data = snap.data();
         if (data) {
+          // 🚨 NUEVO: Verificar si el host salió de la sala
+          if (data.hostSalio) {
+          localStorage.setItem("kickMessage", "El host ha cerrado la sala. Volviendo al inicio...");
+  
+          // 🚨 SOLUCIÓN SIMPLE: Redirigir directamente a la URL base
+          window.location.href = window.location.origin + window.location.pathname;
+          return;
+        }
+
           // 🚨 Verificar si sigo en la sala (por ID)
           const sigoEnSala = data.jugadores && data.jugadores[jugadorId];
 
@@ -1022,6 +1051,15 @@ window.unirseSala = async function() {
 onSnapshot(salaRef, (snap) => {
   const data = snap.data();
   if (data) {
+    // 🚨 NUEVO: Verificar si el host salió de la sala
+    if (data.hostSalio) {
+    localStorage.setItem("kickMessage", "El host ha cerrado la sala. Volviendo al inicio...");
+    
+    // 🚨 SOLUCIÓN SIMPLE: Redirigir directamente a la URL base
+    window.location.href = window.location.origin + window.location.pathname;
+    return;
+  }
+
     // 🚨 Verificar si sigo en la sala (por ID)
     const sigoEnSala = data.jugadores && data.jugadores[jugadorId];
 
